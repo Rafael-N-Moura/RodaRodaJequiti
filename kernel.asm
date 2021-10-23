@@ -312,6 +312,13 @@ printf:
   je finish
   mov ah, 0eh
   int 10h
+  ; 	AH=0Ch 	AL = Color, BH = Page Number, CX = x, DX = y 
+  ; mov ah, 0Ch
+  ; mov al, 2
+  ; mov cx, 15
+  ; mov dx, 16
+  ; int 10h
+  
   jmp printf
   ret
 
@@ -330,9 +337,13 @@ modo_video:
   mov al, 13h ;modo VGA
   int 10h
   
-  mov ah, 0xb ;escolhe cor da tela
-  mov bh, 0
-  mov bl, 1 ;cor da tela
+  mov ah, 06h ;escolhe cor da tela
+  mov bh, 1
+  mov al, 100
+  mov ch, 0
+  mov dh, 50
+  mov cl, 0
+  mov dl, 50 ;cor da tela
   int 10h
 
   mov ah, 0xe ;escolhe cor da letra
