@@ -269,7 +269,7 @@ tela_credits:
   call printf
 
   call getchar
-    cmp al, 'b'
+    cmp al, '27'
     je start
   jmp tela_credits
 
