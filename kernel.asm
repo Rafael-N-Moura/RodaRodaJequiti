@@ -1,4 +1,4 @@
-
+;Jogo da Memoria
 org 0x7E00
 jmp 0x0000:start
 data:
@@ -17,7 +17,7 @@ w6 db 'O objetivo e acertar todas as palavras',0
 w8 db 'Instrucoes',0
 w9 db 'Paulo Sergio',0
 w10 db 'Rafael Moura',0
-n3 db 'rooi',0
+n3 db '',0
 get_back db '*Pressione a tecla ESC se quiser voltar',0
 arrow db '*',0
 ;textoMenu
@@ -45,30 +45,13 @@ arrow db '*',0
 	w_count2 db 'colombia',0
 	w_count3 db 'alemanha',0
     	dica_c db 'TEMA: Paises',0
-    	
-set_videomode:
-  mov ah, 0 ;escolhe modo video
-  mov al, 13h ;modo VGA
-  int 10h
-
-  mov ah, 0xb ;escolhe cor da tela
-  mov bh, 0
-  mov bl, 1 ;cor da tela
-  int 10h
-
-  mov ah, 0xe ;escolhe cor da letra
-  mov bh, 0   ;numero da pagina
-  mov bl, 0xf ;cor branca da letra
-
-  ret
-
 start:
   xor ax, ax
   mov cx, ax
   mov ds, ax
   mov es, ax
 
-	call set_videomode
+	call modo_video
 
   call printa_tittle
   call printa_play
@@ -79,9 +62,9 @@ start:
   jmp $
 
 tela_up:
-  call apaga_arrow_down
-  call apaga_arrow_middle
-  call printa_arrow_up
+  call highlight_D_off
+  call highlight_M_off
+  call highlight_U_on
   call getchar
   cmp al, 13
   je jogo
@@ -91,9 +74,9 @@ tela_up:
   ret
 
 tela_down:
-  call apaga_arrow_up
-  call apaga_arrow_middle
-  call printa_arrow_down
+  call highlight_U_off
+  call highlight_M_off
+  call highlight_D_on
   call getchar
   cmp al, 13
   je tela_credits
@@ -103,9 +86,9 @@ tela_down:
   ret
 
 tela_middle:
-  call apaga_arrow_up
-  call apaga_arrow_down
-  call printa_arrow_middle
+  call highlight_U_off
+  call highlight_D_off
+  call highlight_M_on
   call getchar
   cmp al, 13
   je tela_w8
@@ -159,7 +142,7 @@ printa_credits:
   call printf
   ret
 
-printa_arrow_up:
+highlight_U_on:
   mov ah,02h
   mov dh,10    ;row
   mov dl,15     ;column
@@ -170,7 +153,7 @@ printa_arrow_up:
   call printf
   ret
 
-  printa_arrow_middle:
+  highlight_M_on:
     mov ah,02h
     mov dh,12    ;row
     mov dl,15     ;column
@@ -181,7 +164,7 @@ printa_arrow_up:
     call printf
     ret
 
-printa_arrow_down:
+highlight_D_on:
   mov ah,02h
   mov dh,14    ;row
   mov dl,15     ;column
@@ -194,7 +177,7 @@ printa_arrow_down:
 
 tela_w8:
 
-	call set_videomode
+	call modo_video
 
 	mov ah,02h
 	mov dh,1 ;row
@@ -247,7 +230,7 @@ tela_w8:
 	jmp tela_w8
 
 tela_credits:
-  call set_videomode
+  call modo_video
 
   mov ah,02h
   mov dh,1 ;row
@@ -290,7 +273,7 @@ tela_credits:
     je start
   jmp tela_credits
 
-apaga_arrow_down:
+highlight_D_off:
   mov ah,02h
   mov dh,14    ;row
   mov dl,15     ;column
@@ -301,7 +284,7 @@ apaga_arrow_down:
   call printf
   ret
 
-apaga_arrow_middle:
+highlight_M_off:
   mov ah,02h
   mov dh,12    ;row
   mov dl,15     ;column
@@ -312,7 +295,7 @@ apaga_arrow_middle:
   call printf
   ret
 
-apaga_arrow_up:
+highlight_U_off:
   mov ah,02h
   mov dh,10    ;row
   mov dl,15     ;column
@@ -341,7 +324,21 @@ putchar:
   mov ah, 0eh ;modo de imprmir na tela
   int 10h ;imprime o que tá em al
   ret
+  
+modo_video:
+  mov ah, 0 ;escolhe modo video
+  mov al, 13h ;modo VGA
+  int 10h
+  
+  mov ah, 0xb ;escolhe cor da tela
+  mov bh, 0
+  mov bl, 1 ;cor da tela
+  int 10h
 
+  mov ah, 0xe ;escolhe cor da letra
+  mov bh, 0   ;numero da pagina
+  mov bl, 0xf ;cor branca da letra
+  
 finish:
   ret
 
