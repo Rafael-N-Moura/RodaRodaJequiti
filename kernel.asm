@@ -1,4 +1,4 @@
-
+;Jogo da Memoria
 org 0x7E00
 jmp 0x0000:start
 data:
@@ -11,20 +11,26 @@ data:
 w1 db 'Digite a palavra1: ',0
 w2 db 'Digite a palavra2: ',0
 w3 db 'Digite a palavra3: ',0
-w4 db 'Escolha uma letra e gire a roda',0
-w5 db 'A cada letra acertada ha um acrescimo de pontos',0
-w6 db 'O objetivo e acertar todas as palavras',0
-w8 db 'Instrucoes',0
-w9 db 'Paulo Sergio',0
-w10 db 'Rafael Moura',0
+w4 db '> Gire a roda e escolha uma letra',0
+w5 db '> A cada letra acertada ha um acrescimo de pontos',0
+w6 db '> O objetivo consiste em acertar todas as palavras',0
+w7 db '> Voce pode advinhar a palavra toda se preferir,mas o risco e por sua conta',0 
+w8 db 'INSTRUCOES',0
+w9 db 'Paulo Sergio <PSGS>',0
+w10 db 'Rafael Moura<RM>',0 ;completa ai man
 n3 db '',0
+t1 db 'Escolha um tema',0 ;caso os temas na hora de jogar n sejam gerados de modo aleatorio: 
+sports db '* Esportes (1)',0
+health db '* Saude (2)',0
+tech db ' * Tecnologia (3)',0
+countries db '* Paises (4)',0
 get_back db '*Pressione a tecla ESC se quiser voltar',0
 arrow db '*',0
 ;textoMenu
 	tittle db 'Roda-Roda Jequiti',0
 	play db 'JOGAR',0
 	instruct db'Escolher tema',0
-	credits db 'Creditos',0
+	credits db 'CREDITOS',0
 ;t_body
 	w_body1 db 'estomago',0 
 	w_body2 db 'maxilar',0
@@ -45,6 +51,25 @@ arrow db '*',0
 	w_count2 db 'colombia',0
 	w_count3 db 'alemanha',0
     	dica_c db 'TEMA: Paises',0
+    	
+;empty_strings ;usadas no jogo...
+body1  db '_ _ _ _ _ _ _ _',0
+body2  db '_ _ _ _ _ _ _',0
+body3  db '_ _ _ _ _ _ _',0
+sport1 db '******',0
+sport2 db 'threads',0
+sport3 db 'threads',0
+tech1  db '******* ',0
+tech2  db '********',0
+tech3  db '************',0
+count1 db '*******',0
+count2 db '********',0
+count3 db '********',0
+;game_screen
+ spin_r db '> Girar Roleta[G]',0
+ exit db '> Exit[ESC]',0
+ guess db '> Advinhar palavra [F]',0
+ score_board db'Score: ',0
 start:
   xor ax, ax
   mov cx, ax
@@ -67,7 +92,7 @@ tela_up:
   call highlight_U_on
   call getchar
   cmp al, 13
-  je jogo
+  je jogo_t_body
   cmp al, 's'
   je tela_middle
   jmp tela_up
@@ -177,11 +202,18 @@ highlight_D_on:
 
 tela_w8:
 
-	call modo_video
+	mov ah, 0 ;escolhe modo videos
+  	mov al, 12h ;modo VGA
+  	int 10h
+  
+  	mov ah, 0xb ;escolhe cor da tela
+  	mov bh, 0
+  	mov bl, 0;cor da tela
+  	int 10h
 
 	mov ah,02h
 	mov dh,1 ;row
-	mov dl,17 ;column
+	mov dl,33 ;column
 	mov bl,10
 	int 10h
 
@@ -189,7 +221,7 @@ tela_w8:
 	call printf
 
   mov ah,02h
-	mov dh,4 ;row
+	mov dh,5 ;row
 	mov dl,0 ;column
 	mov bl,2
 	int 10h
@@ -216,7 +248,16 @@ tela_w8:
   call printf
 
   mov ah,02h
-  mov dh,20 ;row
+  mov dh,17 ;row
+  mov dl,0 ;column
+  mov bl,2
+  int 10h
+  
+  mov si, w7
+  call printf
+
+  mov ah,02h
+  mov dh,21 ;row
   mov dl,0 ;column
   mov bl,3
   int 10h
@@ -271,7 +312,7 @@ tela_credits:
   call getchar
     cmp al, 27
     je start
-  jmp tela_credits
+	jmp tela_credits
 
 highlight_D_off:
   mov ah,02h
@@ -312,13 +353,6 @@ printf:
   je finish
   mov ah, 0eh
   int 10h
-  ; 	AH=0Ch 	AL = Color, BH = Page Number, CX = x, DX = y 
-  ; mov ah, 0Ch
-  ; mov al, 2
-  ; mov cx, 15
-  ; mov dx, 16
-  ; int 10h
-  
   jmp printf
   ret
 
@@ -333,25 +367,208 @@ putchar:
   ret
   
 modo_video:
-  mov ah, 0 ;escolhe modo video
+  mov ah, 0 ;escolhe modo videos
   mov al, 13h ;modo VGA
   int 10h
   
-  mov ah, 06h ;escolhe cor da tela
-  mov bh, 1
-  mov al, 100
-  mov ch, 0
-  mov dh, 50
-  mov cl, 0
-  mov dl, 50 ;cor da tela
+  mov ah, 0xb ;escolhe cor da tela
+  mov bh, 0
+  mov bl, 0;cor da tela
   int 10h
 
   mov ah, 0xe ;escolhe cor da letra
   mov bh, 0   ;numero da pagina
   mov bl, 0xf ;cor branca da letra
-  
+ 
+ 
 finish:
   ret
+  
+  
+tela_tema:
+mov ah, 0 ;escolhe modo videos
+  	mov al, 13h ;modo VGA
+  	int 10h
+  
+  	mov ah, 0xb ;escolhe cor da tela
+  	mov bh, 0
+  	mov bl, 7;cor da tela
+  	int 10h
 
-jogo:
+	mov ah,02h
+	mov dh,1 ;row
+	mov dl,13 ;column
+	mov bl,13
+	int 10h
+
+	mov si, t1
+	call printf
+
+  mov ah,02h
+	mov dh,7 ;row
+	mov dl,11 ;column
+	mov bl,15
+	int 10h
+
+	mov si, body1
+	call printf
+
+  mov ah,02h
+  mov dh,10 ;row
+  mov dl,12 ;column
+  mov bl,15
+  int 10h
+
+  mov si, body2
+  call printf
+
+  mov ah,02h
+  mov dh,13 ;row
+  mov dl,12 ;column
+  mov bl,15
+  int 10h
+
+  mov si, body3
+  call printf
+
+  mov ah,02h
+  mov dh,18 ;row
+  mov dl,0 ;column
+  mov bl,11
+  int 10h
+  
+  mov si,spin_r
+  call printf
+
+  mov ah,02h
+  mov dh,20 ;row
+  mov dl,0 ;column
+  mov bl,11
+  int 10h
+
+  mov si,  guess
+  call printf
+  
+  mov ah,02h
+  mov dh,22 ;row
+  mov dl,0 ;column
+  mov bl,11
+  int 10h
+  
+  mov si,exit
+  call printf
+  
+  mov ah,02h
+  mov dh,4 ;row
+  mov dl,31 ;column
+  mov bl,14
+  int 10h
+  
+
+	call getchar
+    cmp al, 27
+    je start
+    cmp al,103
+    ;jump to spinning roulette screen
+    cmp al,70
+    ;jmp to the guessing word screen
+    
+    ;ainda vai ser implementado
+	jmp jogo_t_body
+	
+	
+	
+	
+jogo_t_body: ;parei aki...
+mov ah, 0 ;escolhe modo videos
+  	mov al, 13h ;modo VGA
+  	int 10h
+  
+  	mov ah, 0xb ;escolhe cor da tela
+  	mov bh, 0
+  	mov bl, 1;cor da tela
+  	int 10h
+
+	mov ah,02h
+	mov dh,1 ;row
+	mov dl,6 ;column
+	mov bl,10
+	int 10h
+
+	mov si, dica_b
+	call printf
+
+  mov ah,02h
+	mov dh,7 ;row
+	mov dl,11 ;column
+	mov bl,15
+	int 10h
+
+	mov si, body1
+	call printf
+
+  mov ah,02h
+  mov dh,10 ;row
+  mov dl,12 ;column
+  mov bl,15
+  int 10h
+
+  mov si, body2
+  call printf
+
+  mov ah,02h
+  mov dh,13 ;row
+  mov dl,12 ;column
+  mov bl,15
+  int 10h
+
+  mov si, body3
+  call printf
+
+  mov ah,02h
+  mov dh,18 ;row
+  mov dl,0 ;column
+  mov bl,11
+  int 10h
+  
+  mov si,spin_r
+  call printf
+
+  mov ah,02h
+  mov dh,20 ;row
+  mov dl,0 ;column
+  mov bl,11
+  int 10h
+
+  mov si,  guess
+  call printf
+  
+  mov ah,02h
+  mov dh,22 ;row
+  mov dl,0 ;column
+  mov bl,11
+  int 10h
+  
+  mov si,exit
+  call printf
+  
+  mov ah,02h
+  mov dh,4 ;row
+  mov dl,31 ;column
+  mov bl,14
+  int 10h
+  
+  
+  
+  mov si,  score_board
+  call printf
+
+	call getchar
+    cmp al, 27
+    je start
+    cmp al,103
+    ;jump to spinning roulette screen
+    cmp al,70 ;start guessing the three words
+    
+	jmp jogo_t_body
  jmp $
