@@ -1,4 +1,4 @@
-;Jogo da Memoria
+
 org 0x7E00
 jmp 0x0000:start
 data:
