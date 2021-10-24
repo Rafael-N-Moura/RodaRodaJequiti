@@ -24,6 +24,7 @@ health db '* Saude (2)',0
 tech db ' * Tecnologia (3)',0
 countries db '* Paises (4)',0
 get_back db '*Pressione a tecla ESC se quiser voltar',0
+arrow db '*',0
 bolo db 'a','b','c','d'
 ;textoMenu
   tittle db 'Roda-Roda Jequiti',0
@@ -83,15 +84,49 @@ start:
   call printa_credits
   call tela_up
 
-  jmp $
 
+;gerador de randomicos tema
+random_number_tema:
+  	random_start03:
+  		mov AH,00h
+  		int 1AH
+  		mov ax,dx
+  		xor dx,dx
+  		mov cx,4
+  		div cx
+  		ret
+
+;gerador de randomicos score
+random_number_score:
+  	random_start09:
+  		mov AH,00h
+  		int 1AH
+  		mov ax,dx
+  		xor dx,dx
+  		mov cx,10
+  		div cx
+  		ret
+prossegue_jogo:
+  call random_number_tema
+  mov al,dl
+  add al,48
+  cmp al,48
+  je jogo_t_body
+  cmp al,49
+  je jogo_t_sports
+  cmp al,50
+  je jogo_t_tech
+  cmp al,51
+  je jogo_t_count
+  
+  
 tela_up:
   call highlight_D_off
   call highlight_M_off
   call highlight_U_on
   call getchar
   cmp al, 13
-  je jogo_t_count
+  je prossegue_jogo
   cmp al, 's'
   je tela_middle
   jmp tela_up
@@ -469,53 +504,49 @@ modo_video:
 finish:
   ret
   
-  
-tela_tema:
+jogo_t_body: ;
 mov ah, 0 ;escolhe modo videos
-    mov al, 13h ;modo VGA
-    int 10h
+  	mov al, 13h ;modo VGA
+  	int 10h
   
-    mov ah, 0xb ;escolhe cor da tela
-    mov bh, 0
-    mov bl, 7;cor da tela
-    int 10h
-
+  	mov ah, 0xb ;escolhe cor da tela
+  	mov bh, 0
+  	mov bl, 1;cor da tela
+  	int 10h
+	mov ah,02h
+	mov dh,1 ;row
+	mov dl,6 ;column
+	mov bl,10
+	int 10h
+	mov si, dica_b
+	call printf
   mov ah,02h
-  mov dh,1 ;row
-  mov dl,13 ;column
-  mov bl,13
-  int 10h
-
-  mov si, t1
-  call printf
-
-  mov ah,02h
-  mov dh,7 ;row
-  mov dl,11 ;column
-  mov bl,15
-  int 10h
-
-  mov si, body1
-  call printf
-
+  
+	mov dh,7 ;row
+	mov dl,11 ;column
+	mov bl,15
+	int 10h
+	mov si, body1
+	call printf
+	
   mov ah,02h
   mov dh,10 ;row
   mov dl,12 ;column
   mov bl,15
   int 10h
-
+  
   mov si, body2
   call printf
-
+  
   mov ah,02h
   mov dh,13 ;row
-  mov dl,12 ;column
+  mov dl,11 ;column
   mov bl,15
   int 10h
-
+  
   mov si, body3
   call printf
-
+  
   mov ah,02h
   mov dh,18 ;row
   mov dl,0 ;column
@@ -524,13 +555,13 @@ mov ah, 0 ;escolhe modo videos
   
   mov si,spin_r
   call printf
-
+  
   mov ah,02h
   mov dh,20 ;row
   mov dl,0 ;column
   mov bl,11
   int 10h
-
+  
   mov si,  guess
   call printf
   
@@ -549,215 +580,17 @@ mov ah, 0 ;escolhe modo videos
   mov bl,14
   int 10h
   
-
+ mov si,  score_board
+  call printf 
+  
   call getchar
     cmp al, 27
     je start
-    cmp al,49
+    ;cmp al,49
     ;jump to spinning roulette screen
-    cmp al,50
-    ;jmp to the guessing word screen
-    
-    ;ainda vai ser implementado
-  jmp jogo_t_body
-  
-  
-  
-  
-jogo_t_body: ;
-mov ah, 0 ;escolhe modo videos
-    mov al, 13h ;modo VGA
-    int 10h
-  
-    mov ah, 0xb ;escolhe cor da tela
-    mov bh, 0
-    mov bl, 1;cor da tela
-    int 10h
-
-  mov ah,02h
-  mov dh,1 ;row
-  mov dl,6 ;column
-  mov bl,10
-  int 10h
-
-  mov si, dica_b
-  call printf
-
-  mov ah,02h
-  mov dh,7 ;row
-  mov dl,11 ;column
-  mov bl,15
-  int 10h
-
-  mov si, body1
-  call printf
-
-  mov ah,02h
-  mov dh,10 ;row
-  mov dl,12 ;column
-  mov bl,15
-  int 10h
-
-  mov si, body2
-  call printf
-
-  mov ah,02h
-  mov dh,13 ;row
-  mov dl,12 ;column
-  mov bl,15
-  int 10h
-
-  mov si, body3
-  call printf
-
-  mov ah,02h
-  mov dh,18 ;row
-  mov dl,0 ;column
-  mov bl,11
-  int 10h
-  
-  mov si,spin_r
-  call printf
-
-  mov ah,02h
-  mov dh,20 ;row
-  mov dl,0 ;column
-  mov bl,11
-  int 10h
-
-  mov si,  guess
-  call printf
-  
-  mov ah,02h
-  mov dh,22 ;row
-  mov dl,0 ;column
-  mov bl,11
-  int 10h
-  
-  mov si,exit
-  call printf
-  
-  mov ah,02h
-  mov dh,4 ;row
-  mov dl,31 ;column
-  mov bl,14
-  int 10h
-  
-  
-  
-  mov si,  score_board
-  call printf
-
-  mov ah,02h
-  mov dh,20    ;row
-  mov dl,33  ;column
-  int 10h
-  
-  ; mov ax, @data
-  ; mov ds, ax
-  ; mov cx, 5
-  ; mov si, OFFSET bolo
-  ; mov ah, 02h
-  ; mov si, w_sport1
-  ; inc si
-  ; mov al, [si]
-  ; mov di, w_sport1
-  ; mov [di], 7
-  ; mov si, w_sport1
-  ; mov al, [si]
-  ; mov di, w_sport1
-  ; mov al, 'b'
-  ; inc di
-  ; stosb
-  ; mov si, w_sport1
-  ; inc si
-  ; mov al, [si]
-  
-  ; call comparar_word1_body
-  ; call comparar_word2_body
-
-  mov ah,02h
-  mov dh,1 ;row
-  mov dl,12 ;column
-  mov bl,5
-  int 10h
-
-  mov si, dica_s
-  call printf
-
-  mov ah,02h
-  mov dh,7 ;row
-  mov dl,13 ;column
-  mov bl,15
-  int 10h
-
-  mov si, sport1
-  call printf
-
-  mov ah,02h
-  mov dh,10 ;row
-  mov dl,7 ;column
-  mov bl,15
-  int 10h
-
-  mov si, sport2
-  call printf
-
-  mov ah,02h
-  mov dh,13 ;row
-  mov dl,3 ;column
-  mov bl,15
-  int 10h
-
-  mov si, sport3
-  call printf
-
-  mov ah,02h
-  mov dh,18 ;row
-  mov dl,0 ;column
-  mov bl,11
-  int 10h
-  
-  mov si,spin_r
-  call printf
-
-  mov ah,02h
-  mov dh,20 ;row
-  mov dl,0 ;column
-  mov bl,11
-  int 10h
-
-  mov si,  guess
-  call printf
-  
-  mov ah,02h
-  mov dh,22 ;row
-  mov dl,0 ;column
-  mov bl,11
-  int 10h
-  
-  mov si,exit
-  call printf
-  
-  mov ah,02h
-  mov dh,4 ;row
-  mov dl,31 ;column
-  mov bl,14
-  int 10h
-  
-  
-  
-  mov si,  score_board
-  call printf
-
-  call getchar
-  call putchar
-   cmp al, 27
-    je start
-    ;cmp al,103
-    ;jump to spinning roulette screen
-    ;cmp al,70 ;start guessing the three words
-  mov cx, ax
+    ;cmp al,50 ;start guessing the three words
+   ;jmp jogo_t_body
+mov cx, ax
   call getchar
    cmp al, 0x0d
     je comparar_body
@@ -846,8 +679,101 @@ comparar_word2_body:
   jmp .done
 
   .done:
-    ret
+    ret	
 
+jogo_t_sports
+
+mov ah, 0 ;escolhe modo videos
+  	mov al, 13h ;modo VGA
+  	int 10h
+  
+  	mov ah, 0xb ;escolhe cor da tela
+  	mov bh, 0
+  	mov bl, 1;cor da tela
+  	int 10h
+
+	mov ah,02h
+	mov dh,1 ;row
+	mov dl,12 ;column
+	mov bl,5
+	int 10h
+
+	mov si, dica_s
+	call printf
+
+  mov ah,02h
+	mov dh,7 ;row
+	mov dl,13 ;column
+	mov bl,15
+	int 10h
+
+	mov si, sport1
+	call printf
+
+  mov ah,02h
+  mov dh,10 ;row
+  mov dl,10 ;column
+  mov bl,15
+  int 10h
+
+  mov si, sport2
+  call printf
+
+  mov ah,02h
+  mov dh,13 ;row
+  mov dl,12 ;column
+  mov bl,15
+  int 10h
+
+  mov si, sport3
+  call printf
+
+  mov ah,02h
+  mov dh,18 ;row
+  mov dl,0 ;column
+  mov bl,11
+  int 10h
+  
+  mov si,spin_r
+  call printf
+
+  mov ah,02h
+  mov dh,20 ;row
+  mov dl,0 ;column
+  mov bl,11
+  int 10h
+
+  mov si,  guess
+  call printf
+  
+  mov ah,02h
+  mov dh,22 ;row
+  mov dl,0 ;column
+  mov bl,11
+  int 10h
+  
+  mov si,exit
+  call printf
+  
+  mov ah,02h
+  mov dh,4 ;row
+  mov dl,31 ;column
+  mov bl,14
+  int 10h
+  
+  
+  
+  mov si,  score_board
+  call printf
+
+	call getchar
+    cmp al, 27
+    je start
+    cmp al,49
+    ;jump to spinning roulette screen
+    cmp al,50 ;start guessing the three words
+	jmp jogo_t_sports
+	
 ;tela_jogo_tech
 jogo_t_tech: ;
 mov ah, 0 ;escolhe modo videos
@@ -888,7 +814,7 @@ mov ah, 0 ;escolhe modo videos
 
   mov ah,02h
   mov dh,13 ;row
-  mov dl,8 ;column
+  mov dl,11 ;column
   mov bl,15
   int 10h
 
@@ -974,7 +900,7 @@ mov ah, 0 ;escolhe modo videos
 
   mov ah,02h
   mov dh,10 ;row
-  mov dl,11 ;column
+  mov dl,9 ;column
   mov bl,15
   int 10h
 
@@ -983,7 +909,7 @@ mov ah, 0 ;escolhe modo videos
 
   mov ah,02h
   mov dh,13 ;row
-  mov dl,11 ;column
+  mov dl,12 ;column
   mov bl,15
   int 10h
 
