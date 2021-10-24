@@ -2,10 +2,10 @@ org 0x7E00
 jmp 0x0000:start
 data:
 ;no reg ax estara o score...
-	xor ax, ax   ;zerando todos os regs que serao utilizados
-  	mov cx, ax  
-  	mov ds, ax
-  	mov es, ax
+  xor ax, ax   ;zerando todos os regs que serao utilizados
+    mov cx, ax  
+    mov ds, ax
+    mov es, ax
 ;aux_texts
 w1 db 'Digite a palavra1: ',0
 w2 db 'Digite a palavra2: ',0
@@ -24,47 +24,46 @@ health db '* Saude (2)',0
 tech db ' * Tecnologia (3)',0
 countries db '* Paises (4)',0
 get_back db '*Pressione a tecla ESC se quiser voltar',0
-arrow db '*',0
 bolo db 'a','b','c','d'
 ;textoMenu
-	tittle db 'Roda-Roda Jequiti',0
-	play db 'JOGAR',0
-	instruct db'Escolher tema',0
-	credits db 'CREDITOS',0
+  tittle db 'Roda-Roda Jequiti',0
+  play db 'JOGAR',0
+  instruct db'Escolher tema',0
+  credits db 'CREDITOS',0
 ;t_body
-	w_body1 db 'abdomen',0 
-	w_body2 db 'lingua',0
-	w_body3 db 'laringe',0
-	dica_b db 'TEMA: Partes do corpo humano ',0
+  w_body1 db 'abdomen',0 
+  w_body2 db 'lingua',0
+  w_body3 db 'laringe',0
+  dica_b db 'TEMA: Partes do corpo humano ',0
 ;t_sport
-	w_sport1 db 'hockey',0 ;6caracteres
-	w_sport2 db 'tenis de mesa',0 ;13 caracteres
-	w_sport3 db 'futebol de praia',0
-	dica_s db 'TEMA: Esportes',0
+  w_sport1 db 'hockey',0 ;6caracteres
+  w_sport2 db 'atletismo',0 ;9 caracteres
+  w_sport3 db 'boliche',0 ;7caracteres
+  dica_s db 'TEMA: Esportes',0
 ;t_tech
-	w_tech1 db 'threads',0
-	w_tech2 db 'deadlock',0
-	w_tech3 db 'concorrencia',0
-	dica_h db 'TEMA: Tecnologia',0
+  w_tech1 db 'threads',0 ;7caracteres
+  w_tech2 db 'deadlock',0 ;8 caracteres
+  w_tech3 db 'software',0 ;8caracteres
+  dica_h db 'TEMA: Tecnologia',0
 ;t_countries
-	w_count1 db 'belgica',0
-	w_count2 db 'colombia',0
-	w_count3 db 'alemanha',0
-    	dica_c db 'TEMA: Paises',0
-    	
+  w_count1 db 'belgica',0 ;7caracteres
+  w_count2 db 'mocambique',0 ;10 caracteres
+  w_count3 db 'noruega',0 ;7 caracteres
+  dica_c db 'TEMA: Paises',0
+      
 ;empty_strings ;usadas no jogo...
 body1  db '_ _ _ _ _ _ _',0
 body2  db '_ _ _ _ _ _',0
 body3  db '_ _ _ _ _ _ _',0
 sport1 db '_ _ _ _ _ _',0
-sport2 db '_ _ _ _ _ _ _ _ _ _ _ _ _',0
-sport3 db '_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _',0
+sport2 db '_ _ _ _ _ _ _ _ _',0
+sport3 db '_ _ _ _ _ _ _',0
 tech1  db '_ _ _ _ _ _ _',0
 tech2  db '_ _ _ _ _ _ _ _',0
-tech3  db '_ _ _ _ _ _ _ _ _ _ _',0
+tech3  db '_ _ _ _ _ _ _ _',0
 count1 db '_ _ _ _ _ _ _',0
-count2 db '_ _ _ _ _ _ _ _',0
-count3 db '_ _ _ _ _ _ _ _',0
+count2 db '_ _ _ _ _ _ _ _ _ _',0
+count3 db '_ _ _ _ _ _ _',0
 ;game_screen
  spin_r db '> Girar Roleta [1]',0
  exit db '> Exit [ESC]',0
@@ -76,7 +75,7 @@ start:
   mov ds, ax
   mov es, ax
 
-	call modo_video
+  call modo_video
 
   call printa_tittle
   call printa_play
@@ -288,32 +287,32 @@ highlight_D_on:
 
 tela_w8:
 
-	mov ah, 0 ;escolhe modo videos
-  	mov al, 12h ;modo VGA
-  	int 10h
+  mov ah, 0 ;escolhe modo videos
+    mov al, 12h ;modo VGA
+    int 10h
   
-  	mov ah, 0xb ;escolhe cor da tela
-  	mov bh, 0
-  	mov bl, 0;cor da tela
-  	int 10h
-
-	mov ah,02h
-	mov dh,1 ;row
-	mov dl,33 ;column
-	mov bl,10
-	int 10h
-
-	mov si, w8
-	call printf
+    mov ah, 0xb ;escolhe cor da tela
+    mov bh, 0
+    mov bl, 0;cor da tela
+    int 10h
 
   mov ah,02h
-	mov dh,5 ;row
-	mov dl,0 ;column
-	mov bl,2
-	int 10h
+  mov dh,1 ;row
+  mov dl,33 ;column
+  mov bl,10
+  int 10h
 
-	mov si, w4
-	call printf
+  mov si, w8
+  call printf
+
+  mov ah,02h
+  mov dh,5 ;row
+  mov dl,0 ;column
+  mov bl,2
+  int 10h
+
+  mov si, w4
+  call printf
 
   mov ah,02h
   mov dh,9 ;row
@@ -351,10 +350,10 @@ tela_w8:
   mov si, get_back
   call printf
 
-	call getchar
+  call getchar
     cmp al, 27
     je start
-	jmp tela_w8
+  jmp tela_w8
 
 tela_credits:
   call modo_video
@@ -398,7 +397,7 @@ tela_credits:
   call getchar
     cmp al, 27
     je start
-	jmp tela_credits
+  jmp tela_credits
 
 highlight_D_off:
   mov ah,02h
@@ -473,31 +472,31 @@ finish:
   
 tela_tema:
 mov ah, 0 ;escolhe modo videos
-  	mov al, 13h ;modo VGA
-  	int 10h
+    mov al, 13h ;modo VGA
+    int 10h
   
-  	mov ah, 0xb ;escolhe cor da tela
-  	mov bh, 0
-  	mov bl, 7;cor da tela
-  	int 10h
-
-	mov ah,02h
-	mov dh,1 ;row
-	mov dl,13 ;column
-	mov bl,13
-	int 10h
-
-	mov si, t1
-	call printf
+    mov ah, 0xb ;escolhe cor da tela
+    mov bh, 0
+    mov bl, 7;cor da tela
+    int 10h
 
   mov ah,02h
-	mov dh,7 ;row
-	mov dl,11 ;column
-	mov bl,15
-	int 10h
+  mov dh,1 ;row
+  mov dl,13 ;column
+  mov bl,13
+  int 10h
 
-	mov si, body1
-	call printf
+  mov si, t1
+  call printf
+
+  mov ah,02h
+  mov dh,7 ;row
+  mov dl,11 ;column
+  mov bl,15
+  int 10h
+
+  mov si, body1
+  call printf
 
   mov ah,02h
   mov dh,10 ;row
@@ -551,7 +550,7 @@ mov ah, 0 ;escolhe modo videos
   int 10h
   
 
-	call getchar
+  call getchar
     cmp al, 27
     je start
     cmp al,49
@@ -560,38 +559,38 @@ mov ah, 0 ;escolhe modo videos
     ;jmp to the guessing word screen
     
     ;ainda vai ser implementado
-	jmp jogo_t_body
-	
-	
-	
-	
+  jmp jogo_t_body
+  
+  
+  
+  
 jogo_t_body: ;
 mov ah, 0 ;escolhe modo videos
-  	mov al, 13h ;modo VGA
-  	int 10h
+    mov al, 13h ;modo VGA
+    int 10h
   
-  	mov ah, 0xb ;escolhe cor da tela
-  	mov bh, 0
-  	mov bl, 1;cor da tela
-  	int 10h
-
-	mov ah,02h
-	mov dh,1 ;row
-	mov dl,6 ;column
-	mov bl,10
-	int 10h
-
-	mov si, dica_b
-	call printf
+    mov ah, 0xb ;escolhe cor da tela
+    mov bh, 0
+    mov bl, 1;cor da tela
+    int 10h
 
   mov ah,02h
-	mov dh,7 ;row
-	mov dl,11 ;column
-	mov bl,15
-	int 10h
+  mov dh,1 ;row
+  mov dl,6 ;column
+  mov bl,10
+  int 10h
 
-	mov si, body1
-	call printf
+  mov si, dica_b
+  call printf
+
+  mov ah,02h
+  mov dh,7 ;row
+  mov dl,11 ;column
+  mov bl,15
+  int 10h
+
+  mov si, body1
+  call printf
 
   mov ah,02h
   mov dh,10 ;row
@@ -677,23 +676,23 @@ mov ah, 0 ;escolhe modo videos
   ; call comparar_word1_body
   ; call comparar_word2_body
 
-	mov ah,02h
-	mov dh,1 ;row
-	mov dl,12 ;column
-	mov bl,5
-	int 10h
+  mov ah,02h
+  mov dh,1 ;row
+  mov dl,12 ;column
+  mov bl,5
+  int 10h
 
-	mov si, dica_s
-	call printf
+  mov si, dica_s
+  call printf
 
   mov ah,02h
-	mov dh,7 ;row
-	mov dl,13 ;column
-	mov bl,15
-	int 10h
+  mov dh,7 ;row
+  mov dl,13 ;column
+  mov bl,15
+  int 10h
 
-	mov si, sport1
-	call printf
+  mov si, sport1
+  call printf
 
   mov ah,02h
   mov dh,10 ;row
@@ -751,7 +750,7 @@ mov ah, 0 ;escolhe modo videos
   mov si,  score_board
   call printf
 
-	call getchar
+  call getchar
   call putchar
    cmp al, 27
     je start
@@ -764,7 +763,7 @@ mov ah, 0 ;escolhe modo videos
     je comparar_body
    
     
-	jmp jogo_t_body
+  jmp jogo_t_body
 
 
 comparar_body:
@@ -852,31 +851,31 @@ comparar_word2_body:
 ;tela_jogo_tech
 jogo_t_tech: ;
 mov ah, 0 ;escolhe modo videos
-  	mov al, 13h ;modo VGA
-  	int 10h
+    mov al, 13h ;modo VGA
+    int 10h
   
-  	mov ah, 0xb ;escolhe cor da tela
-  	mov bh, 0
-  	mov bl, 1;cor da tela
-  	int 10h
-
-	mov ah,02h
-	mov dh,1 ;row
-	mov dl,11 ;column
-	mov bl,9
-	int 10h
-
-	mov si, dica_h
-	call printf
+    mov ah, 0xb ;escolhe cor da tela
+    mov bh, 0
+    mov bl, 1;cor da tela
+    int 10h
 
   mov ah,02h
-	mov dh,7 ;row
-	mov dl,12 ;column
-	mov bl,15
-	int 10h
+  mov dh,1 ;row
+  mov dl,11 ;column
+  mov bl,9
+  int 10h
 
-	mov si, tech1
-	call printf
+  mov si, dica_h
+  call printf
+
+  mov ah,02h
+  mov dh,7 ;row
+  mov dl,12 ;column
+  mov bl,15
+  int 10h
+
+  mov si, tech1
+  call printf
 
   mov ah,02h
   mov dh,10 ;row
@@ -934,44 +933,44 @@ mov ah, 0 ;escolhe modo videos
   mov si,  score_board
   call printf
 
-	call getchar
+  call getchar
     cmp al, 27
     je start
     cmp al,49
     ;jump to spinning roulette screen
     cmp al,50 ;start guessing the three words
     
-	jmp jogo_t_tech
+  jmp jogo_t_tech
 
-;tela_jogo_countries	
-	
+;tela_jogo_countries  
+  
 jogo_t_count: 
 mov ah, 0 ;escolhe modo videos
-  	mov al, 13h ;modo VGA
-  	int 10h
+    mov al, 13h ;modo VGA
+    int 10h
   
-  	mov ah, 0xb ;escolhe cor da tela
-  	mov bh, 0
-  	mov bl, 1;cor da tela
-  	int 10h
-
-	mov ah,02h
-	mov dh,1 ;row
-	mov dl,11 ;column
-	mov bl,2
-	int 10h
-
-	mov si, dica_c
-	call printf
+    mov ah, 0xb ;escolhe cor da tela
+    mov bh, 0
+    mov bl, 1;cor da tela
+    int 10h
 
   mov ah,02h
-	mov dh,7 ;row
-	mov dl,12 ;column
-	mov bl,15
-	int 10h
+  mov dh,1 ;row
+  mov dl,11 ;column
+  mov bl,2
+  int 10h
 
-	mov si, count1
-	call printf
+  mov si, dica_c
+  call printf
+
+  mov ah,02h
+  mov dh,7 ;row
+  mov dl,12 ;column
+  mov bl,15
+  int 10h
+
+  mov si, count1
+  call printf
 
   mov ah,02h
   mov dh,10 ;row
@@ -1029,14 +1028,14 @@ mov ah, 0 ;escolhe modo videos
   mov si,  score_board
   call printf
 
-	call getchar
+  call getchar
     cmp al, 27
     je start
     cmp al,49
     ;jump to spinning roulette screen
     cmp al,50 ;start guessing the three words
     
-	jmp jogo_t_count	
+  jmp jogo_t_count  
 
 
 
