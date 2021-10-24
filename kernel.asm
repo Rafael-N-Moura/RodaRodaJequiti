@@ -10,13 +10,13 @@ data:
 w1 db 'Digite a palavra1: ',0
 w2 db 'Digite a palavra2: ',0
 w3 db 'Digite a palavra3: ',0
-w4 db '> Gire a roda e escolha uma letra',0
-w5 db '> A cada letra acertada ha um acrescimo de pontos',0
+w4 db '> Gire a roda e digite uma letra',0
+w5 db '> A cada letra acertada ha um acrescimo de pontos de acordo com o que voce tirou na roleta',0
 w6 db '> O objetivo consiste em acertar todas as palavras',0
 w7 db '> Voce pode advinhar a palavra toda se preferir,mas o risco e por sua conta',0 
 w8 db 'INSTRUCOES',0
 w9 db 'Paulo Sergio <PSGS>',0
-w10 db 'Rafael Moura<RM>',0
+w10 db 'Rafael Moura<RNM4>',0
 n3 db '',0
 t1 db 'Escolha um tema',0 ;caso os temas na hora de jogar n sejam gerados de modo aleatorio: 
 sports db '* Esportes (1)',0
@@ -25,6 +25,7 @@ tech db ' * Tecnologia (3)',0
 countries db '* Paises (4)',0
 get_back db '*Pressione a tecla ESC se quiser voltar',0
 arrow db '*',0
+bolo db 'a','b','c','d'
 ;textoMenu
 	tittle db 'Roda-Roda Jequiti',0
 	play db 'JOGAR',0
@@ -65,8 +66,8 @@ count1 db '_ _ _ _ _ _ _',0
 count2 db '_ _ _ _ _ _ _ _',0
 count3 db '_ _ _ _ _ _ _ _',0
 ;game_screen
- spin_r db '> Girar Roleta[1]',0
- exit db '> Exit[ESC]',0
+ spin_r db '> Girar Roleta [1]',0
+ exit db '> Exit [ESC]',0
  guess db '> Advinhar palavra [2]',0
  score_board db'Score: ',0
 start:
@@ -96,6 +97,92 @@ tela_up:
   je tela_middle
   jmp tela_up
   ret
+  
+printa_num:
+  mov ah,02h
+  mov dh,4    ;row
+  mov dl,8     ;column
+  int 10h
+  mov al,'0'
+  call putchar
+  
+
+  mov ah,02h
+  mov dh,4    ;row
+  mov dl,14     ;column
+  int 10h
+  mov al,'1'
+  call putchar
+  
+
+  mov ah,02h
+  mov dh,4    ;row
+  mov dl,20    ;column
+  int 10h
+  mov al,'2'
+  call putchar
+  
+
+  mov ah,02h
+  mov dh,4    ;row
+  mov dl,27     ;column
+  int 10h
+  mov al,'3'
+  call putchar
+  
+
+  mov ah,02h
+  mov dh,4    ;row
+  mov dl,33  ;column
+  int 10h
+  mov al,'4'
+  call putchar
+  
+  
+  mov ah,02h
+  mov dh,18    ;row
+  mov dl,8     ;column
+  int 10h
+  mov al,'5'
+  call putchar
+  
+
+  mov ah,02h
+  mov dh,18    ;row
+  mov dl,14     ;column
+  int 10h
+  mov al,'6'
+  call putchar
+  
+
+  mov ah,02h
+  mov dh,18    ;row
+  mov dl,20    ;column
+  int 10h
+  mov al,'7'
+  call putchar
+  
+
+  mov ah,02h
+  mov dh,18    ;row
+  mov dl,27     ;column
+  int 10h
+  mov al,'8'
+  call putchar
+  
+
+  mov ah,02h
+  mov dh,18    ;row
+  mov dl,33  ;column
+  int 10h
+  mov al,'9'
+  call putchar
+
+  ret
+
+
+  
+  
 
 tela_down:
   call highlight_U_off
@@ -467,9 +554,9 @@ mov ah, 0 ;escolhe modo videos
 	call getchar
     cmp al, 27
     je start
-    cmp al,103
+    cmp al,49
     ;jump to spinning roulette screen
-    cmp al,70
+    cmp al,50
     ;jmp to the guessing word screen
     
     ;ainda vai ser implementado
@@ -583,9 +670,9 @@ mov ah, 0 ;escolhe modo videos
 	call getchar
     cmp al, 27
     je start
-    cmp al,103
+    cmp al,49
     ;jump to spinning roulette screen
-    cmp al,70 ;start guessing the three words
+    cmp al,50 ;start guessing the three words
     
 	jmp jogo_t_body
 	
@@ -679,9 +766,9 @@ mov ah, 0 ;escolhe modo videos
 	call getchar
     cmp al, 27
     je start
-    cmp al,103
+    cmp al,49
     ;jump to spinning roulette screen
-    cmp al,70 ;start guessing the three words
+    cmp al,50 ;start guessing the three words
     
 	jmp jogo_t_sports
 	
@@ -773,9 +860,9 @@ mov ah, 0 ;escolhe modo videos
 	call getchar
     cmp al, 27
     je start
-    cmp al,103
+    cmp al,49
     ;jump to spinning roulette screen
-    cmp al,70 ;start guessing the three words
+    cmp al,50 ;start guessing the three words
     
 	jmp jogo_t_tech
 
@@ -859,17 +946,24 @@ mov ah, 0 ;escolhe modo videos
   mov dl,31 ;column
   mov bl,14
   int 10h
-
+  
+  
+  
   mov si,  score_board
   call printf
 
 	call getchar
     cmp al, 27
     je start
-    cmp al,103
+    cmp al,49
     ;jump to spinning roulette screen
-    cmp al,70 ;start guessing the three words
+    cmp al,50 ;start guessing the three words
     
 	jmp jogo_t_count	
+	
+
+
+	
+	
 	
  jmp $
