@@ -32,9 +32,9 @@ bolo db 'a','b','c','d'
 	instruct db'Escolher tema',0
 	credits db 'CREDITOS',0
 ;t_body
-	w_body1 db 'estomago',0 
-	w_body2 db 'maxilar',0
-	w_body3 db 'pescoco',0
+	w_body1 db 'abdomen',0 
+	w_body2 db 'lingua',0
+	w_body3 db 'laringe',0
 	dica_b db 'TEMA: Partes do corpo humano ',0
 ;t_sport
 	w_sport1 db 'hockey',0 ;6caracteres
@@ -53,8 +53,8 @@ bolo db 'a','b','c','d'
     	dica_c db 'TEMA: Paises',0
     	
 ;empty_strings ;usadas no jogo...
-body1  db '_ _ _ _ _ _ _ _',0
-body2  db '_ _ _ _ _ _ _',0
+body1  db '_ _ _ _ _ _ _',0
+body2  db '_ _ _ _ _ _',0
 body3  db '_ _ _ _ _ _ _',0
 sport1 db '******',0
 sport2 db 'threads',0
@@ -650,7 +650,7 @@ mov ah, 0 ;escolhe modo videos
   mov dh,20    ;row
   mov dl,33  ;column
   int 10h
-  call getchar
+  
   ; mov ax, @data
   ; mov ds, ax
   ; mov cx, 5
@@ -663,15 +663,113 @@ mov ah, 0 ;escolhe modo videos
   ; mov [di], 7
   ; mov si, w_sport1
   ; mov al, [si]
-  call putchar
+  ; mov di, w_sport1
+  ; mov al, 'b'
+  ; inc di
+  ; stosb
+  ; mov si, w_sport1
+  ; inc si
+  ; mov al, [si]
+  
+  ; call comparar_word1_body
+  ; call comparar_word2_body
 
 
 	call getchar
-    cmp al, 27
+  call putchar
+   cmp al, 27
     je start
-    cmp al,103
+    ;cmp al,103
     ;jump to spinning roulette screen
-    cmp al,70 ;start guessing the three words
+    ;cmp al,70 ;start guessing the three words
+  mov cx, ax
+  call getchar
+   cmp al, 0x0d
+    je comparar_body
+   
     
 	jmp jogo_t_body
+
+
+comparar_body:
+  mov ax, cx
+  call comparar_word1_body
+  call comparar_word2_body
+  call comparar_word3_body
+  jmp jogo_t_body
+ret
+
+comparar_word1_body:
+  mov di, body1
+  mov si, w_body1
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 8
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
+  
+  .done:
+  ret
+
+comparar_word3_body:
+  mov di, body3
+  mov si, w_body3
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 8
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
+  
+  .done:
+  ret
+
+comparar_word2_body:
+ xor di, di
+  xor si, si
+  mov di, body2
+  mov si, w_body2
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 6
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
+
+  .done:
+    ret
  jmp $
