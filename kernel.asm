@@ -17,6 +17,7 @@ w7 db '> Voce pode advinhar a palavra toda se preferir,mas o risco e por sua con
 w8 db 'INSTRUCOES',0
 w9 db 'Paulo Sergio <PSGS>',0
 w10 db 'Rafael Moura<RNM4>',0
+w11 db 'Obrigado por jogar! <3',0
 n3 db '',0
 t1 db 'Escolha um tema',0 ;caso os temas na hora de jogar n sejam gerados de modo aleatorio: 
 sports db '* Esportes (1)',0
@@ -118,6 +119,30 @@ prossegue_jogo:
   je jogo_t_tech
   cmp al,51
   je jogo_t_count
+  
+               ;funcao que printa as coisas gradualmente
+  print_string:
+	mov bl,02h
+	loop_print_string:
+		mov cx,1
+		call delay
+		lodsb
+		cmp al,0
+		je end_print_string
+		mov ah,0eh
+		int 10h
+		jmp loop_print_string
+	end_print_string:
+		ret
+
+delay:
+	mov ah, 86h
+	;mov cx, 0
+	xor dx, dx
+	mov dx, 40	
+	int 15h
+ret
+  
   
   
 tela_up:
@@ -347,7 +372,7 @@ tela_w8:
   int 10h
 
   mov si, w4
-  call printf
+  call print_string
 
   mov ah,02h
   mov dh,9 ;row
@@ -356,8 +381,7 @@ tela_w8:
   int 10h
 
   mov si, w5
-  call printf
-
+  call print_string
   mov ah,02h
   mov dh,13 ;row
   mov dl,0 ;column
@@ -365,7 +389,7 @@ tela_w8:
   int 10h
 
   mov si, w6
-  call printf
+  call print_string
 
   mov ah,02h
   mov dh,17 ;row
@@ -374,7 +398,7 @@ tela_w8:
   int 10h
   
   mov si, w7
-  call printf
+  call print_string
 
   mov ah,02h
   mov dh,21 ;row
@@ -409,7 +433,7 @@ tela_credits:
   int 10h
 
   mov si, w9
-  call printf
+  call print_string
 
   mov ah,02h
   mov dh,9 ;row
@@ -418,7 +442,7 @@ tela_credits:
   int 10h
 
   mov si, w10
-  call printf
+  call print_string
 
   mov ah,02h
   mov dh,14 ;row
@@ -428,6 +452,15 @@ tela_credits:
 
   mov si, n3
   call printf
+  ;;;
+  mov ah,02h
+  mov dh,20 ;row
+  mov dl,5 ;column
+  mov bl,0xc
+  int 10h
+
+  mov si, w11
+  call print_string
 
   call getchar
     cmp al, 27
