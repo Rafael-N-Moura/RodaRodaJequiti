@@ -1,5 +1,6 @@
 org 0x7E00
 jmp 0x0000:start
+
 data:
 ;no reg ax estara o score...
   xor ax, ax   ;zerando todos os regs que serao utilizados
@@ -71,6 +72,8 @@ count3 db '_ _ _ _ _ _ _',0
  exit db '> Exit [ESC]',0
  guess db '> Advinhar palavra [2]',0
  score_board db'Score: ',0
+
+
 start:
   xor ax, ax
   mov cx, ax
@@ -536,7 +539,7 @@ modo_video:
  
 finish:
   ret
-  
+;------------------------TUDO DA TELA BODY------------------------------------------
 jogo_t_body: ;
 mov ah, 0 ;escolhe modo videos
   	mov al, 13h ;modo VGA
@@ -673,79 +676,6 @@ comparar_word1_body:
   .done:
   ret
 
-comparar_word1_sports:
-  mov di, sport1
-  mov si, w_sport1
-  xor cx, cx
-  xor dx, dx
-  .loop:
-  cmp dx, 6 ;9, 7
-  je .done
-  cmp al, [si]
-  je .substituir_letra
-  inc si
-  inc dx
-  inc cx
-  jmp .loop
-
-  .substituir_letra:
-  add cx, cx
-  add di, cx
-  stosb
-  jmp .done
-  
-  .done:
-  ret
-
-comparar_word3_body:
-  mov di, body3
-  mov si, w_body3
-  xor cx, cx
-  xor dx, dx
-  .loop:
-  cmp dx, 8
-  je .done
-  cmp al, [si]
-  je .substituir_letra
-  inc si
-  inc dx
-  inc cx
-  jmp .loop
-
-  .substituir_letra:
-  add cx, cx
-  add di, cx
-  stosb
-  jmp .done
-  
-  .done:
-  ret
-
-comparar_word3_sports:
-  mov di, sport3
-  mov si, w_sport3
-  xor cx, cx
-  xor dx, dx
-  .loop:
-  cmp dx, 7 ;9
-  je .done
-  cmp al, [si]
-  je .substituir_letra
-  inc si
-  inc dx
-  inc cx
-  jmp .loop
-
-  .substituir_letra:
-  add cx, cx
-  add di, cx
-  stosb
-  jmp .done
-  
-  .done:
-  ret
-
-
 comparar_word2_body:
  xor di, di
   xor si, si
@@ -772,13 +702,13 @@ comparar_word2_body:
   .done:
     ret	
 
-comparar_word2_sports:
-  mov di, sport2
-  mov si, w_sport2
+comparar_word3_body:
+  mov di, body3
+  mov si, w_body3
   xor cx, cx
   xor dx, dx
   .loop:
-  cmp dx, 7 
+  cmp dx, 8
   je .done
   cmp al, [si]
   je .substituir_letra
@@ -798,6 +728,7 @@ comparar_word2_sports:
 
 
 
+;------------------------TUDO DA TELA SPORTS------------------------------------------
 jogo_t_sports:
 
 mov ah, 0 ;escolhe modo videos
@@ -913,7 +844,83 @@ comparar_sport:
   call comparar_word3_sports
   jmp jogo_t_sports
 ret
-;tela_jogo_tech
+
+comparar_word1_sports:
+  mov di, sport1
+  mov si, w_sport1
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 6 ;9, 7
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
+  
+  .done:
+  ret
+
+comparar_word2_sports:
+  mov di, sport2
+  mov si, w_sport2
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 7 
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
+  
+  .done:
+  ret
+
+comparar_word3_sports:
+  mov di, sport3
+  mov si, w_sport3
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 7 ;9
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
+  
+  .done:
+  ret
+
+
+
+
+;------------------------TUDO DA TELA TECH------------------------------------------
 jogo_t_tech: ;
 mov ah, 0 ;escolhe modo videos
     mov al, 13h ;modo VGA
@@ -998,17 +1005,115 @@ mov ah, 0 ;escolhe modo videos
   mov si,  score_board
   call printf
 
+ 	 mov ah,02h
+  mov dh,20 ;row
+  mov dl,30 ;column
+  mov bl,14
+  int 10h
+  
   call getchar
+  
     cmp al, 27
     je start
-    cmp al,49
+    ;cmp al,49
     ;jump to spinning roulette screen
-    cmp al,50 ;start guessing the three words
+    ;cmp al,50 ;start guessing the three words
+   ;jmp jogo_t_body
+mov cx, ax
+call putchar
+  call getchar
+   cmp al, 0x0d
+    je comparar_tech
     
   jmp jogo_t_tech
 
-;tela_jogo_countries  
+comparar_tech:
+  mov ax, cx
+  call comparar_word1_tech
+  call comparar_word2_tech
+  call comparar_word3_tech
+  jmp jogo_t_tech
+ret
+
+comparar_word1_tech:
+  mov di, tech1
+  mov si, w_tech1
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 7 ;9, 7
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
   
+  .done:
+  ret
+
+comparar_word2_tech:
+ xor di, di
+  xor si, si
+  mov di, tech2
+  mov si, w_tech2
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 8
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
+
+  .done:
+    ret	
+
+comparar_word3_tech:
+  mov di, tech3
+  mov si, w_tech3
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 8 ;9
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
+  
+  .done:
+  ret
+
+
+
+
+ 
+;------------------------TUDO DA TELA COUNTRIES------------------------------------------  
 jogo_t_count: 
 mov ah, 0 ;escolhe modo videos
     mov al, 13h ;modo VGA
