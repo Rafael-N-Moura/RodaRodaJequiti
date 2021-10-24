@@ -39,7 +39,7 @@ bolo db 'a','b','c','d'
   dica_b db 'TEMA: Partes do corpo humano ',0
 ;t_sport
   w_sport1 db 'hockey',0 ;6caracteres
-  w_sport2 db 'atletismo',0 ;9 caracteres
+  w_sport2 db 'esgrima',0 ;9 caracteres
   w_sport3 db 'boliche',0 ;7caracteres
   dica_s db 'TEMA: Esportes',0
 ;t_tech
@@ -58,7 +58,7 @@ body1  db '_ _ _ _ _ _ _',0
 body2  db '_ _ _ _ _ _',0
 body3  db '_ _ _ _ _ _ _',0
 sport1 db '_ _ _ _ _ _',0
-sport2 db '_ _ _ _ _ _ _ _ _',0
+sport2 db '_ _ _ _ _ _ _',0
 sport3 db '_ _ _ _ _ _ _',0
 tech1  db '_ _ _ _ _ _ _',0
 tech2  db '_ _ _ _ _ _ _ _',0
@@ -616,7 +616,15 @@ mov ah, 0 ;escolhe modo videos
  mov si,  score_board
   call printf 
   
+  
+  mov ah,02h
+  mov dh,20 ;row
+  mov dl,30 ;column
+  mov bl,14
+  int 10h
+  
   call getchar
+  
     cmp al, 27
     je start
     ;cmp al,49
@@ -624,6 +632,7 @@ mov ah, 0 ;escolhe modo videos
     ;cmp al,50 ;start guessing the three words
    ;jmp jogo_t_body
 mov cx, ax
+call putchar
   call getchar
    cmp al, 0x0d
     je comparar_body
@@ -647,6 +656,30 @@ comparar_word1_body:
   xor dx, dx
   .loop:
   cmp dx, 8
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
+  
+  .done:
+  ret
+
+comparar_word1_sports:
+  mov di, sport1
+  mov si, w_sport1
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 6 ;9, 7
   je .done
   cmp al, [si]
   je .substituir_letra
@@ -688,6 +721,31 @@ comparar_word3_body:
   .done:
   ret
 
+comparar_word3_sports:
+  mov di, sport3
+  mov si, w_sport3
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 7 ;9
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
+  
+  .done:
+  ret
+
+
 comparar_word2_body:
  xor di, di
   xor si, si
@@ -714,7 +772,33 @@ comparar_word2_body:
   .done:
     ret	
 
-jogo_t_sports
+comparar_word2_sports:
+  mov di, sport2
+  mov si, w_sport2
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 7 
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
+  
+  .done:
+  ret
+
+
+
+jogo_t_sports:
 
 mov ah, 0 ;escolhe modo videos
   	mov al, 13h ;modo VGA
@@ -799,14 +883,36 @@ mov ah, 0 ;escolhe modo videos
   mov si,  score_board
   call printf
 
-	call getchar
+	 mov ah,02h
+  mov dh,20 ;row
+  mov dl,30 ;column
+  mov bl,14
+  int 10h
+  
+  call getchar
+  
     cmp al, 27
     je start
-    cmp al,49
+    ;cmp al,49
     ;jump to spinning roulette screen
-    cmp al,50 ;start guessing the three words
-	jmp jogo_t_sports
+    ;cmp al,50 ;start guessing the three words
+   ;jmp jogo_t_body
+mov cx, ax
+call putchar
+  call getchar
+   cmp al, 0x0d
+    je comparar_sport
+
+  jmp jogo_t_sports
 	
+
+comparar_sport:
+  mov ax, cx
+  call comparar_word1_sports
+  call comparar_word2_sports
+  call comparar_word3_sports
+  jmp jogo_t_sports
+ret
 ;tela_jogo_tech
 jogo_t_tech: ;
 mov ah, 0 ;escolhe modo videos
