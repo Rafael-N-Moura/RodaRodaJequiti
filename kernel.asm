@@ -28,6 +28,7 @@ countries db '* Paises (4)',0
 get_back db '*Pressione a tecla ESC se quiser voltar',0
 arrow db '*',0
 bolo db 'a','b','c','d'
+guessWord times 20 db 0
 ;textoMenu
   tittle db 'Roda-Roda Jequiti',0
   play db 'JOGAR',0
@@ -242,8 +243,173 @@ printa_num:
 
   ret
 
+strcmp:              ; mov si, string1, mov di, string2
+  .loop1:
+    lodsb
+    cmp al, byte[di]
+    jne .notequal
+    cmp al, 0
+    je .equal
+    inc di
+    jmp .loop1
+  .notequal:
+    ;clc
+    mov cl, 0
+    ret
+  .equal:
+    ;stc
+    mov cl, 1
+    ret
+
+
+guessing_word_body:
+  mov di, guessWord
+  call gets
+  mov si, w_body1
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual1
+  jmp .igual1
+
+  .igual1:
+  call substituir_word1_body
+  jmp jogo_t_body
+
+
+  .neigual1:
+  mov si, w_body2
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual2
+  jmp .igual2
+
+  .igual2:
+  call substituir_word2_body
+  jmp jogo_t_body
+
+  .neigual2:
+  mov si, w_body3
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual3
+  jmp .igual3
+
+  .igual3:
+  call substituir_word3_body
+  jmp jogo_t_body
+
+  .neigual3:
+  jmp start
+
+    
+  
+
 
   
+
+
+ret
+substituir_word1_body:
+  mov di, body1
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
+
+  substituir_word2_body:
+  mov di, body2
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
+
+
+ substituir_word3_body:
+  mov di, body3
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
+  
+gets:
+    xor cx, cx
+    mov dl, 27
+
+    .loop1:
+        call getchar
+        cmp al, 0x08
+        je .backspace
+        cmp al, 0x0d
+        je .done
+        cmp cl, 50
+        je .loop1
+        stosb
+        inc cl
+        mov ah,02h
+        mov dh,18    ;row
+        inc dl     ;column
+        int 10h
+        call putchar
+        jmp .loop1
+
+        .backspace:
+            cmp cl, 0
+            je .loop1
+            dec di
+            dec cl
+            mov byte[di], 0
+            call delchar
+            dec dl
+            jmp .loop1
+        .done:
+            mov al, 0
+            stosb
+            call endl
+
+ret
+
+endl:
+    mov al, 0x0a
+    call putchar
+    mov al, 0x0d
+    call putchar
+ret
+
+delchar:
+    mov al, 0x08                    
+    call putchar
+    mov al, ' '
+    call putchar
+    mov al, 0x08                   
+    call putchar
+ret
   
 
 tela_down:
@@ -632,7 +798,10 @@ mov ah, 0 ;escolhe modo videos
     je start
     ;cmp al,49
     ;jump to spinning roulette screen
-    ;cmp al,50 ;start guessing the three words
+    ;cmp al,50 ;
+    ;start guessing the three words
+    cmp al, '1'
+    je guessing_word_body
    ;jmp jogo_t_body
 mov cx, ax
 call putchar
@@ -1198,14 +1367,110 @@ mov ah, 0 ;escolhe modo videos
   mov si,  score_board
   call printf
 
+	 mov ah,02h
+  mov dh,20 ;row
+  mov dl,30 ;column
+  mov bl,14
+  int 10h
+  
   call getchar
+  
     cmp al, 27
     je start
-    cmp al,49
+    ;cmp al,49
     ;jump to spinning roulette screen
-    cmp al,50 ;start guessing the three words
+    ;cmp al,50 ;start guessing the three words
+   ;jmp jogo_t_body
+mov cx, ax
+call putchar
+  call getchar
+   cmp al, 0x0d
+    je comparar_count
     
-  jmp jogo_t_count  
+  jmp jogo_t_count
+
+comparar_count:
+  mov ax, cx
+  call comparar_word1_count
+  call comparar_word2_count
+  call comparar_word3_count
+  jmp jogo_t_count
+ret
+
+comparar_word1_count:
+  mov di, count1
+  mov si, w_count1
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 7 ;9, 7
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
+  
+  .done:
+  ret
+
+comparar_word2_count:
+ xor di, di
+  xor si, si
+  mov di, count2
+  mov si, w_count2
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 10
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
+
+  .done:
+    ret	
+
+comparar_word3_count:
+  mov di, count3
+  mov si, w_count3
+  xor cx, cx
+  xor dx, dx
+  .loop:
+  cmp dx, 7 ;9
+  je .done
+  cmp al, [si]
+  je .substituir_letra
+  inc si
+  inc dx
+  inc cx
+  jmp .loop
+
+  .substituir_letra:
+  add cx, cx
+  add di, cx
+  stosb
+  jmp .done
+  
+  .done:
+  ret
+ 
 
 
 
