@@ -2,7 +2,6 @@ org 0x7E00
 jmp 0x0000:start
 
 data:
-;no reg ax estara o score...
   xor ax, ax   ;zerando todos os regs que serao utilizados
     mov cx, ax  
     mov ds, ax
@@ -26,7 +25,6 @@ health db '* Saude (2)',0
 tech db ' * Tecnologia (3)',0
 countries db '* Paises (4)',0
 get_back db '*Pressione a tecla ESC se quiser voltar',0
-arrow db '*',0
 bolo db 'a','b','c','d'
 guessWord times 20 db 0
 ;textoMenu
@@ -73,6 +71,13 @@ count3 db '_ _ _ _ _ _ _',0
  exit db '> Exit [ESC]',0
  guess db '> Advinhar palavra [2]',0
  score_board db'Score: ',0
+ ;telagiro
+str1 db '........Girando..........',0
+str2 db 'Uma letra por R$:',0
+lucky db 'Que sorte!                ',0
+hazard db 'Que azar, voce perdeu tudo!',0
+empty db '                            ',0
+
 
 
 start:
@@ -102,15 +107,239 @@ random_number_tema:
   		ret
 
 ;gerador de randomicos score
-random_number_score:
+random_number_0to9:
   	random_start09:
   		mov AH,00h
   		int 1AH
+  		
   		mov ax,dx
   		xor dx,dx
   		mov cx,10
   		div cx
   		ret
+  		
+;gerar letras coloridas
+coloured_letter:
+ mov si,str1
+	mov bl,02h
+	loop_print_string1:
+		mov cx,1
+		call delay
+		lodsb
+		cmp al,0
+		je end_print_string1
+		mov ah,0eh
+		int 10h
+		call random_number_0to9
+		mov bl,dl
+		add bl,1
+		jmp loop_print_string1
+	end_print_string1:
+		ret
+
+delay:
+	mov ah, 86h
+	;mov cx, 0
+	xor dx, dx
+	mov dx, 40	
+	int 15h
+ret
+
+text_azar: ;funcao responsavel de tratar o caso azar (rand num gerando 0)
+	mov ah,02h
+	mov dh,1 ;row
+	mov dl,15 ;column
+	mov bl,10
+	int 10h
+	mov si,empty
+	call printf
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,12 ;column
+	mov bl,12
+	int 10h
+	mov si,str2
+	call printf
+	call delay1s
+	call delay1s
+	call delay1s
+	
+ret 
+
+ 	
+delay1s:                 ; 1 SEC DELAY
+  mov cx, 0fh
+  mov dx, 4240h
+  mov ah, 86h
+  int 15h
+  ret
+;tela giro
+tela_giro1:				  		
+mov ah, 0 ;escolhe modo videos
+  	mov al, 13h ;modo VGA
+  	int 10h
+  
+  	mov ah, 0xb ;escolhe cor da tela
+  	mov bh, 0
+  	mov bl, 0;cor da tela
+  	int 10h
+  	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	mov bl,10
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,1 ;row
+	mov dl,15 ;column
+	mov bl,10
+	int 10h
+	mov si,lucky
+	call printf
+	
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,12 ;column
+	mov bl,14
+	int 10h
+	mov si,str2
+	call printf
+	call delay1s
+	call delay1s
+	call delay1s
+	
+	jmp jogo_t_body
+  
+  ret
+ ;...........................
+ tela_giro2:				  		
+mov ah, 0 ;escolhe modo videos
+  	mov al, 13h ;modo VGA
+  	int 10h
+  
+  	mov ah, 0xb ;escolhe cor da tela
+  	mov bh, 0
+  	mov bl, 0;cor da tela
+  	int 10h
+  	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,1 ;row
+	mov dl,15 ;column
+	mov bl,10
+	int 10h
+	mov si,lucky
+	call printf
+	
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,12 ;column
+	mov bl,14
+	int 10h
+	mov si,str2
+	call printf
+	call delay1s
+	call delay1s
+	call delay1s
+	
+	jmp jogo_t_sports
+  
+  
+  ret
+  
+  ;..........................
+  tela_giro3:				  		
+mov ah, 0 ;escolhe modo videos
+  	mov al, 13h ;modo VGA
+  	int 10h
+  
+  	mov ah, 0xb ;escolhe cor da tela
+  	mov bh, 0
+  	mov bl, 0;cor da tela
+  	int 10h
+  	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,1 ;row
+	mov dl,15 ;column
+	mov bl,10
+	int 10h
+	mov si,lucky
+	call printf
+	
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,12 ;column
+	mov bl,14
+	int 10h
+	mov si,str2
+	call printf
+	call delay1s
+	call delay1s
+	call delay1s
+	
+	jmp jogo_t_tech
+  
+  
+  ret
+  ;................
+  tela_giro4:				  		
+mov ah, 0 ;escolhe modo videos
+  	mov al, 13h ;modo VGA
+  	int 10h
+  
+  	mov ah, 0xb ;escolhe cor da tela
+  	mov bh, 0
+  	mov bl, 0;cor da tela
+  	int 10h
+  	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,1 ;row
+	mov dl,15 ;column
+	mov bl,10
+	int 10h
+	mov si,lucky
+	call printf
+	
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,12 ;column
+	mov bl,14
+	int 10h
+	mov si,str2
+	call printf
+	call delay1s
+	call delay1s
+	call delay1s
+	
+	jmp jogo_t_count
+  
+  
+  ret
+  ;....................
 prossegue_jogo:
   call random_number_tema
   mov al,dl
@@ -139,14 +368,7 @@ prossegue_jogo:
 	end_print_string:
 		ret
 
-delay:
-	mov ah, 86h
-	;mov cx, 0
-	xor dx, dx
-	mov dx, 40	
-	int 15h
-ret
-  
+
   
   
 tela_up:
@@ -304,13 +526,6 @@ guessing_word_body:
   .neigual3:
   jmp start
 
-    
-  
-
-
-  
-
-
 ret
 substituir_word1_body:
   mov di, body1
@@ -441,7 +656,7 @@ tela_middle:
 printa_tittle:
   mov ah,02h
   mov dh,3    ;row
-  mov dl,10     ;column
+  mov dl,9     ;column
   int 10h
 
   mov si, tittle
@@ -722,8 +937,8 @@ mov ah, 0 ;escolhe modo videos
 	int 10h
 	mov si, dica_b
 	call printf
-  mov ah,02h
-  
+	
+  	mov ah,02h
 	mov dh,7 ;row
 	mov dl,11 ;column
 	mov bl,15
@@ -798,9 +1013,10 @@ mov ah, 0 ;escolhe modo videos
     je start
     ;cmp al,49
     ;jump to spinning roulette screen
-    ;cmp al,50 ;
+    cmp al,'1'
+    je tela_giro1 
     ;start guessing the three words
-    cmp al, '1'
+    cmp al, '2'
     je guessing_word_body
    ;jmp jogo_t_body
 mov cx, ax
@@ -993,9 +1209,10 @@ mov ah, 0 ;escolhe modo videos
   
     cmp al, 27
     je start
-    ;cmp al,49
+    cmp al,'1'
+    je tela_giro2
     ;jump to spinning roulette screen
-    ;cmp al,50 ;start guessing the three words
+    ;cmp al,'2' ;start guessing the three words
    ;jmp jogo_t_body
 mov cx, ax
 call putchar
@@ -1184,7 +1401,8 @@ mov ah, 0 ;escolhe modo videos
   
     cmp al, 27
     je start
-    ;cmp al,49
+    cmp al,'1'
+    je tela_giro3
     ;jump to spinning roulette screen
     ;cmp al,50 ;start guessing the three words
    ;jmp jogo_t_body
@@ -1377,9 +1595,10 @@ mov ah, 0 ;escolhe modo videos
   
     cmp al, 27
     je start
-    ;cmp al,49
+    cmp al,'1'
+    je tela_giro4
     ;jump to spinning roulette screen
-    ;cmp al,50 ;start guessing the three words
+    cmp al,'2' ;start guessing the three words
    ;jmp jogo_t_body
 mov cx, ax
 call putchar
