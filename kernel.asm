@@ -215,6 +215,15 @@ mov ah, 0 ;escolhe modo videos
 	jmp jogo_t_body
   
   ret
+
+  ;zera tudo caso o jogador perca
+  zerar_tudo:
+    call zerar_words_body
+    call zerar_words_sport
+    call zerar_words_tech
+    call zerar_words_count
+    jmp start
+  ret
  ;...........................
  tela_giro2:				  		
 mov ah, 0 ;escolhe modo videos
@@ -922,7 +931,7 @@ mov ah, 0 ;escolhe modo videos
   call getchar
   
     cmp al, 27
-    je start
+    je zerar_tudo
     ;cmp al,49
     ;jump to spinning roulette screen
     cmp al,'1'
@@ -1063,7 +1072,7 @@ guessing_word_body:
   jmp jogo_t_body
 
   .neigual3:
-  jmp start
+  jmp zerar_tudo
 
 ret
 substituir_word1_body:
@@ -1112,6 +1121,44 @@ substituir_word1_body:
   .done:
     ret
   
+
+zerar_words_body:
+  mov di, body1
+  mov al, '_'
+  xor cx, cx
+
+  .word1:
+    cmp cx, 7
+    je .transicao1
+    stosb
+    inc di
+    inc cx
+    jmp .word1
+
+  .transicao1:
+    mov di, body2
+    xor cx, cx
+    .word2:
+    cmp cx, 6
+    je .transicao2
+    stosb
+    inc di
+    inc cx
+    jmp .word2
+
+  .transicao2:
+    mov di, body3
+    xor cx, cx
+    .word3:
+    cmp cx, 7
+    je .done
+    stosb
+    inc di
+    inc cx
+    jmp .word3
+
+    .done:     
+      ret
 
 ;------------------------TUDO DA TELA SPORTS------------------------------------------
 jogo_t_sports:
@@ -1208,7 +1255,7 @@ mov ah, 0 ;escolhe modo videos
   call getchar
   
     cmp al, 27
-    je start
+    je zerar_tudo
     cmp al,'1'
     je tela_giro2
     ;jump to spinning roulette screen
@@ -1344,7 +1391,7 @@ guessing_word_sport:
   jmp jogo_t_sports
 
   .neigual3:
-  jmp start
+  jmp zerar_tudo
 
 ret
 substituir_word1_sport:
@@ -1393,7 +1440,43 @@ substituir_word1_sport:
   .done:
     ret
   
+  zerar_words_sport:
+  mov di, sport1
+  mov al, '_'
+  xor cx, cx
 
+  .word1:
+    cmp cx, 6
+    je .transicao1
+    stosb
+    inc di
+    inc cx
+    jmp .word1
+
+  .transicao1:
+    mov di, sport2
+    xor cx, cx
+    .word2:
+    cmp cx, 7
+    je .transicao2
+    stosb
+    inc di
+    inc cx
+    jmp .word2
+
+  .transicao2:
+    mov di, sport3
+    xor cx, cx
+    .word3:
+    cmp cx, 7
+    je .done
+    stosb
+    inc di
+    inc cx
+    jmp .word3
+
+    .done:     
+      ret
 
 ;------------------------TUDO DA TELA TECH------------------------------------------
 jogo_t_tech: ;
@@ -1489,7 +1572,7 @@ mov ah, 0 ;escolhe modo videos
   call getchar
   
     cmp al, 27
-    je start
+    je zerar_tudo
     cmp al,'1'
     je tela_giro3
     cmp al, '2'
@@ -1627,7 +1710,7 @@ guessing_word_tech:
   jmp jogo_t_tech
 
   .neigual3:
-  jmp start
+  jmp zerar_tudo
 
 ret
 substituir_word1_tech:
@@ -1677,7 +1760,43 @@ substituir_word1_tech:
     ret
   
 
+  zerar_words_tech:
+  mov di, tech1
+  mov al, '_'
+  xor cx, cx
 
+  .word1:
+    cmp cx, 7
+    je .transicao1
+    stosb
+    inc di
+    inc cx
+    jmp .word1
+
+  .transicao1:
+    mov di, tech2
+    xor cx, cx
+    .word2:
+    cmp cx, 8
+    je .transicao2
+    stosb
+    inc di
+    inc cx
+    jmp .word2
+
+  .transicao2:
+    mov di, tech3
+    xor cx, cx
+    .word3:
+    cmp cx, 8
+    je .done
+    stosb
+    inc di
+    inc cx
+    jmp .word3
+
+    .done:     
+      ret
 
  
 ;------------------------TUDO DA TELA COUNTRIES------------------------------------------  
@@ -1774,7 +1893,7 @@ mov ah, 0 ;escolhe modo videos
   call getchar
   
     cmp al, 27
-    je start
+    je zerar_tudo
     cmp al,'1'
     je tela_giro4
     ;jump to spinning roulette screen
@@ -1911,7 +2030,7 @@ guessing_word_count:
   jmp jogo_t_count
 
   .neigual3:
-  jmp start
+  jmp zerar_tudo
 
 ret
 substituir_word1_count:
@@ -1960,5 +2079,43 @@ substituir_word1_count:
   .done:
     ret
 
+ zerar_words_count:
+  mov di, count1
+  mov al, '_'
+  xor cx, cx
 
+  .word1:
+    cmp cx, 7
+    je .transicao1
+    stosb
+    inc di
+    inc cx
+    jmp .word1
+
+  .transicao1:
+    mov di, count2
+    xor cx, cx
+    .word2:
+    cmp cx, 10
+    je .transicao2
+    stosb
+    inc di
+    inc cx
+    jmp .word2
+
+  .transicao2:
+    mov di, count3
+    xor cx, cx
+    .word3:
+    cmp cx, 7
+    je .done
+    stosb
+    inc di
+    inc cx
+    jmp .word3
+
+    .done:     
+      ret
+
+ 
  jmp $
