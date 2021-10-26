@@ -484,95 +484,7 @@ strcmp:              ; mov si, string1, mov di, string2
     ret
 
 
-guessing_word_body:
-  mov di, guessWord
-  call gets
-  mov si, w_body1
-  mov di, guessWord
-  call strcmp
-  cmp cl, 0
-  je .neigual1
-  jmp .igual1
 
-  .igual1:
-  call substituir_word1_body
-  jmp jogo_t_body
-
-
-  .neigual1:
-  mov si, w_body2
-  mov di, guessWord
-  call strcmp
-  cmp cl, 0
-  je .neigual2
-  jmp .igual2
-
-  .igual2:
-  call substituir_word2_body
-  jmp jogo_t_body
-
-  .neigual2:
-  mov si, w_body3
-  mov di, guessWord
-  call strcmp
-  cmp cl, 0
-  je .neigual3
-  jmp .igual3
-
-  .igual3:
-  call substituir_word3_body
-  jmp jogo_t_body
-
-  .neigual3:
-  jmp start
-
-ret
-substituir_word1_body:
-  mov di, body1
-  mov si, guessWord
-
-  .loop:
-    lodsb
-    cmp al, 0
-    je .done
-    stosb
-    inc di
-    jmp .loop
-
-  .done:
-    ret
-
-  substituir_word2_body:
-  mov di, body2
-  mov si, guessWord
-
-  .loop:
-    lodsb
-    cmp al, 0
-    je .done
-    stosb
-    inc di
-    jmp .loop
-
-  .done:
-    ret
-
-
- substituir_word3_body:
-  mov di, body3
-  mov si, guessWord
-
-  .loop:
-    lodsb
-    cmp al, 0
-    je .done
-    stosb
-    inc di
-    jmp .loop
-
-  .done:
-    ret
-  
 gets:
     xor cx, cx
     mov dl, 27
@@ -1111,7 +1023,95 @@ comparar_word3_body:
   .done:
   ret
 
+guessing_word_body:
+  mov di, guessWord
+  call gets
+  mov si, w_body1
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual1
+  jmp .igual1
 
+  .igual1:
+  call substituir_word1_body
+  jmp jogo_t_body
+
+
+  .neigual1:
+  mov si, w_body2
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual2
+  jmp .igual2
+
+  .igual2:
+  call substituir_word2_body
+  jmp jogo_t_body
+
+  .neigual2:
+  mov si, w_body3
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual3
+  jmp .igual3
+
+  .igual3:
+  call substituir_word3_body
+  jmp jogo_t_body
+
+  .neigual3:
+  jmp start
+
+ret
+substituir_word1_body:
+  mov di, body1
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
+
+  substituir_word2_body:
+  mov di, body2
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
+
+
+ substituir_word3_body:
+  mov di, body3
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
+  
 
 ;------------------------TUDO DA TELA SPORTS------------------------------------------
 jogo_t_sports:
@@ -1212,7 +1212,8 @@ mov ah, 0 ;escolhe modo videos
     cmp al,'1'
     je tela_giro2
     ;jump to spinning roulette screen
-    ;cmp al,'2' ;start guessing the three words
+    cmp al,'2' ;start guessing the three words
+    je guessing_word_sport
    ;jmp jogo_t_body
 mov cx, ax
 call putchar
@@ -1303,7 +1304,95 @@ comparar_word3_sports:
   .done:
   ret
 
+guessing_word_sport:
+  mov di, guessWord
+  call gets
+  mov si, w_sport1
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual1
+  jmp .igual1
 
+  .igual1:
+  call substituir_word1_sport
+  jmp jogo_t_sports
+
+
+  .neigual1:
+  mov si, w_sport2
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual2
+  jmp .igual2
+
+  .igual2:
+  call substituir_word2_sport
+  jmp jogo_t_sports
+
+  .neigual2:
+  mov si, w_sport3
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual3
+  jmp .igual3
+
+  .igual3:
+  call substituir_word3_sport
+  jmp jogo_t_sports
+
+  .neigual3:
+  jmp start
+
+ret
+substituir_word1_sport:
+  mov di, sport1
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
+
+  substituir_word2_sport:
+  mov di, sport2
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
+
+
+ substituir_word3_sport:
+  mov di, sport3
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
+  
 
 
 ;------------------------TUDO DA TELA TECH------------------------------------------
@@ -1403,6 +1492,8 @@ mov ah, 0 ;escolhe modo videos
     je start
     cmp al,'1'
     je tela_giro3
+    cmp al, '2'
+    je guessing_word_tech
     ;jump to spinning roulette screen
     ;cmp al,50 ;start guessing the three words
    ;jmp jogo_t_body
@@ -1496,6 +1587,95 @@ comparar_word3_tech:
   .done:
   ret
 
+guessing_word_tech:
+  mov di, guessWord
+  call gets
+  mov si, w_tech1
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual1
+  jmp .igual1
+
+  .igual1:
+  call substituir_word1_tech
+  jmp jogo_t_tech
+
+
+  .neigual1:
+  mov si, w_tech2
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual2
+  jmp .igual2
+
+  .igual2:
+  call substituir_word2_tech
+  jmp jogo_t_tech
+
+  .neigual2:
+  mov si, w_tech3
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual3
+  jmp .igual3
+
+  .igual3:
+  call substituir_word3_tech
+  jmp jogo_t_tech
+
+  .neigual3:
+  jmp start
+
+ret
+substituir_word1_tech:
+  mov di, tech1
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
+
+  substituir_word2_tech:
+  mov di, tech2
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
+
+
+ substituir_word3_tech:
+  mov di, tech3
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
+  
 
 
 
@@ -1599,6 +1779,7 @@ mov ah, 0 ;escolhe modo videos
     je tela_giro4
     ;jump to spinning roulette screen
     cmp al,'2' ;start guessing the three words
+    je guessing_word_count
    ;jmp jogo_t_body
 mov cx, ax
 call putchar
@@ -1690,7 +1871,94 @@ comparar_word3_count:
   .done:
   ret
  
+guessing_word_count:
+  mov di, guessWord
+  call gets
+  mov si, w_count1
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual1
+  jmp .igual1
 
+  .igual1:
+  call substituir_word1_count
+  jmp jogo_t_count
+
+
+  .neigual1:
+  mov si, w_count2
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual2
+  jmp .igual2
+
+  .igual2:
+  call substituir_word2_count
+  jmp jogo_t_count
+
+  .neigual2:
+  mov si, w_count3
+  mov di, guessWord
+  call strcmp
+  cmp cl, 0
+  je .neigual3
+  jmp .igual3
+
+  .igual3:
+  call substituir_word3_count
+  jmp jogo_t_count
+
+  .neigual3:
+  jmp start
+
+ret
+substituir_word1_count:
+  mov di, count1
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
+
+  substituir_word2_count:
+  mov di, count2
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
+
+
+ substituir_word3_count:
+  mov di, count3
+  mov si, guessWord
+
+  .loop:
+    lodsb
+    cmp al, 0
+    je .done
+    stosb
+    inc di
+    jmp .loop
+
+  .done:
+    ret
 
 
  jmp $
