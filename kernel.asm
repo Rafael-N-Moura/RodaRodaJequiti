@@ -492,6 +492,26 @@ strcmp:              ; mov si, string1, mov di, string2
     mov cl, 1
     ret
 
+strcmp_adaptada:              ; mov si, string1, mov di, string2
+  .loop1:
+    lodsb
+    cmp al, 32
+    je .loop1
+    cmp al, byte[di]
+    jne .notequal
+    cmp al, 0
+    je .equal
+    inc di
+    jmp .loop1
+  .notequal:
+    ;clc
+    mov cl, 0
+    ret
+  .equal:
+    ;stc
+    mov cl, 1
+    ret
+
 
 
 gets:
@@ -843,6 +863,7 @@ finish:
   ret
 ;------------------------TUDO DA TELA BODY------------------------------------------
 jogo_t_body: ;
+    call passou_de_fase_body
 mov ah, 0 ;escolhe modo videos
   	mov al, 13h ;modo VGA
   	int 10h
@@ -1160,8 +1181,33 @@ zerar_words_body:
     .done:     
       ret
 
+;Verifica se o jogador já acertou as 3 palavras
+passou_de_fase_body:
+  mov si, body1
+  mov di, w_body1
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch2
+  ret
+  branch2:
+  mov si,body2
+  mov di, w_body2
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch3
+  ret
+  branch3:
+  mov si,body3
+  mov di, w_body3
+  call strcmp_adaptada
+  cmp cl, 1
+  je prossegue_jogo
+  ret
+
 ;------------------------TUDO DA TELA SPORTS------------------------------------------
 jogo_t_sports:
+
+call passou_de_fase_sport
 
 mov ah, 0 ;escolhe modo videos
   	mov al, 13h ;modo VGA
@@ -1478,8 +1524,31 @@ substituir_word1_sport:
     .done:     
       ret
 
+passou_de_fase_sport:
+  mov si, sport1
+  mov di, w_sport1
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch4
+  ret
+  branch4:
+  mov si,sport2
+  mov di, w_sport2
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch5
+  ret
+  branch5:
+  mov si,sport3
+  mov di, w_sport3
+  call strcmp_adaptada
+  cmp cl, 1
+  je prossegue_jogo
+  ret
+
 ;------------------------TUDO DA TELA TECH------------------------------------------
 jogo_t_tech: ;
+call passou_de_fase_tech
 mov ah, 0 ;escolhe modo videos
     mov al, 13h ;modo VGA
     int 10h
@@ -1798,9 +1867,32 @@ substituir_word1_tech:
     .done:     
       ret
 
+passou_de_fase_tech:
+  mov si, tech1
+  mov di, w_tech1
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch6
+  ret
+  branch6:
+  mov si,tech2
+  mov di, w_tech2
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch7
+  ret
+  branch7:
+  mov si,tech3
+  mov di, w_tech3
+  call strcmp_adaptada
+  cmp cl, 1
+  je prossegue_jogo
+  ret
+ 
  
 ;------------------------TUDO DA TELA COUNTRIES------------------------------------------  
 jogo_t_count: 
+call passou_de_fase_count
 mov ah, 0 ;escolhe modo videos
     mov al, 13h ;modo VGA
     int 10h
@@ -2117,5 +2209,25 @@ substituir_word1_count:
     .done:     
       ret
 
- 
+passou_de_fase_count:
+  mov si, count1
+  mov di, w_count1
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch8
+  ret
+  branch8:
+  mov si,count2
+  mov di, w_count2
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch9
+  ret
+  branch9:
+  mov si,count3
+  mov di, w_count3
+  call strcmp_adaptada
+  cmp cl, 1
+  je prossegue_jogo
+  ret
  jmp $
