@@ -358,47 +358,7 @@ delay1s:                 ; 1 SEC DELAY
   mov ah, 86h
   int 15h
   ret
-;tela giro
-tela_giro1:				  		
-mov ah, 0 ;escolhe modo videos
-  	mov al, 13h ;modo VGA
-  	int 10h
-  
-  	mov ah, 0xb ;escolhe cor da tela
-  	mov bh, 0
-  	mov bl, 0;cor da tela
-  	int 10h
-  	
-	mov ah,02h
-	mov dh,8 ;row
-	mov dl,9 ;column
-	mov bl,10
-	int 10h
-	call coloured_letter
-	
-	mov ah,02h
-	mov dh,1 ;row
-	mov dl,15 ;column
-	mov bl,10
-	int 10h
-	mov si,lucky
-	call printf
-	
-	
-	mov ah,02h
-	mov dh,15 ;row
-	mov dl,12 ;column
-	mov bl,14
-	int 10h
-	mov si,str2
-	call printf
-	call delay1s
-	call delay1s
-	call delay1s
-	
-	jmp jogo_t_body
-  
-  ret
+
 
   ;zera tudo caso o jogador perca
   zerar_tudo:
@@ -408,130 +368,10 @@ mov ah, 0 ;escolhe modo videos
     call zerar_words_count
     jmp start
   ret
- ;...........................
- tela_giro2:				  		
-mov ah, 0 ;escolhe modo videos
-  	mov al, 13h ;modo VGA
-  	int 10h
+ 
   
-  	mov ah, 0xb ;escolhe cor da tela
-  	mov bh, 0
-  	mov bl, 0;cor da tela
-  	int 10h
-  	
-	mov ah,02h
-	mov dh,8 ;row
-	mov dl,9 ;column
-	int 10h
-	call coloured_letter
-	
-	mov ah,02h
-	mov dh,1 ;row
-	mov dl,15 ;column
-	mov bl,10
-	int 10h
-	mov si,lucky
-	call printf
-	
-	
-	mov ah,02h
-	mov dh,15 ;row
-	mov dl,12 ;column
-	mov bl,14
-	int 10h
-	mov si,str2
-	call printf
-	call delay1s
-	call delay1s
-	call delay1s
-	
-	jmp jogo_t_sports
+ 
   
-  
-  ret
-  
-  ;..........................
-  tela_giro3:				  		
-mov ah, 0 ;escolhe modo videos
-  	mov al, 13h ;modo VGA
-  	int 10h
-  
-  	mov ah, 0xb ;escolhe cor da tela
-  	mov bh, 0
-  	mov bl, 0;cor da tela
-  	int 10h
-  	
-	mov ah,02h
-	mov dh,8 ;row
-	mov dl,9 ;column
-	int 10h
-	call coloured_letter
-	
-	mov ah,02h
-	mov dh,1 ;row
-	mov dl,15 ;column
-	mov bl,10
-	int 10h
-	mov si,lucky
-	call printf
-	
-	
-	mov ah,02h
-	mov dh,15 ;row
-	mov dl,12 ;column
-	mov bl,14
-	int 10h
-	mov si,str2
-	call printf
-	call delay1s
-	call delay1s
-	call delay1s
-	
-	jmp jogo_t_tech
-  
-  
-  ret
-  ;................
-  tela_giro4:				  		
-mov ah, 0 ;escolhe modo videos
-  	mov al, 13h ;modo VGA
-  	int 10h
-  
-  	mov ah, 0xb ;escolhe cor da tela
-  	mov bh, 0
-  	mov bl, 0;cor da tela
-  	int 10h
-  	
-	mov ah,02h
-	mov dh,8 ;row
-	mov dl,9 ;column
-	int 10h
-	call coloured_letter
-	
-	mov ah,02h
-	mov dh,1 ;row
-	mov dl,15 ;column
-	mov bl,10
-	int 10h
-	mov si,lucky
-	call printf
-	
-	
-	mov ah,02h
-	mov dh,15 ;row
-	mov dl,12 ;column
-	mov bl,14
-	int 10h
-	mov si,str2
-	call printf
-	call delay1s
-	call delay1s
-	call delay1s
-	
-	jmp jogo_t_count
-  
-  
-  ret
   ;....................
 prossegue_jogo:
   call random_number_tema
@@ -569,7 +409,7 @@ tela_up:
   call highlight_U_on
   call getchar
   cmp al, 13
-  je jogo_t_body
+  je prossegue_jogo
   cmp al, 's'
   je tela_middle
   jmp tela_up
@@ -1147,6 +987,9 @@ mov ah, 0 ;escolhe modo videos
     je guessing_word_body
    ;jmp jogo_t_body
    
+       
+  jmp jogo_t_body
+  
   decisao_de_giro1:
   call random_number_0to9
   mov al,dl
@@ -1154,17 +997,55 @@ mov ah, 0 ;escolhe modo videos
   je text_azar_body
   jmp tela_giro1
   ret 
+
+  ;tela giro
+tela_giro1:				  		
+mov ah, 0 ;escolhe modo videos
+  	mov al, 13h ;modo VGA
+  	int 10h
   
-mov cx, ax
+  	mov ah, 0xb ;escolhe cor da tela
+  	mov bh, 0
+  	mov bl, 0;cor da tela
+  	int 10h
+  	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	mov bl,10
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,1 ;row
+	mov dl,15 ;column
+	mov bl,10
+	int 10h
+	mov si,lucky
+	call printf
+	
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,12 ;column
+	mov bl,14
+	int 10h
+	mov si,str2
+	call printf
+	; call delay1s
+	; call delay1s
+	; call delay1s
+
+  call getchar
+  mov cx, ax
 call putchar
   call getchar
    cmp al, 0x0d
     je comparar_body
-   
-    
-  jmp jogo_t_body
+	
+	jmp jogo_t_body
   
-
+  ret
 
 comparar_body:
   mov ax, cx
@@ -1517,21 +1398,65 @@ mov ah, 0 ;escolhe modo videos
     je guessing_word_sport
    ;jmp jogo_t_body
    
-  decisao_de_giro2:
+ 
+
+
+  jmp jogo_t_sports
+	
+ decisao_de_giro2:
   call random_number_0to9
   mov al,dl
   cmp al,0
   je text_azar_sports
   jmp tela_giro2
   ret 
-mov cx, ax
+;...........................
+ tela_giro2:				  		
+mov ah, 0 ;escolhe modo videos
+  	mov al, 13h ;modo VGA
+  	int 10h
+  
+  	mov ah, 0xb ;escolhe cor da tela
+  	mov bh, 0
+  	mov bl, 0;cor da tela
+  	int 10h
+  	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,1 ;row
+	mov dl,15 ;column
+	mov bl,10
+	int 10h
+	mov si,lucky
+	call printf
+	
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,12 ;column
+	mov bl,14
+	int 10h
+	mov si,str2
+	call printf
+	; call delay1s
+	; call delay1s
+	; call delay1s
+  call getchar
+  mov cx, ax
 call putchar
   call getchar
    cmp al, 0x0d
     je comparar_sport
-
-  jmp jogo_t_sports
 	
+	jmp jogo_t_sports
+  
+  
+  ret
 
 comparar_sport:
   mov ax, cx
@@ -1871,6 +1796,11 @@ mov ah, 0 ;escolhe modo videos
     ;cmp al,50 ;start guessing the three words
    ;jmp jogo_t_body
    
+
+
+    
+  jmp jogo_t_tech
+
   decisao_de_giro3:
   call random_number_0to9
   mov al,dl
@@ -1878,13 +1808,53 @@ mov ah, 0 ;escolhe modo videos
   je text_azar_tech
   jmp tela_giro3
   ret 
-mov cx, ax
+ ;..........................
+  tela_giro3:				  		
+mov ah, 0 ;escolhe modo videos
+  	mov al, 13h ;modo VGA
+  	int 10h
+  
+  	mov ah, 0xb ;escolhe cor da tela
+  	mov bh, 0
+  	mov bl, 0;cor da tela
+  	int 10h
+  	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,1 ;row
+	mov dl,15 ;column
+	mov bl,10
+	int 10h
+	mov si,lucky
+	call printf
+	
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,12 ;column
+	mov bl,14
+	int 10h
+	mov si,str2
+	call printf
+	; call delay1s
+	; call delay1s
+	; call delay1s
+  call getchar
+  mov cx, ax
 call putchar
   call getchar
    cmp al, 0x0d
     je comparar_tech
-    
-  jmp jogo_t_tech
+	
+	jmp jogo_t_tech
+  
+  
+  ret
 
 comparar_tech:
   mov ax, cx
@@ -2227,6 +2197,11 @@ mov ah, 0 ;escolhe modo videos
    ;jmp jogo_t_body
    
    
+
+
+    
+  jmp jogo_t_count
+
   decisao_de_giro4:
   call random_number_0to9
   mov al,dl
@@ -2234,13 +2209,59 @@ mov ah, 0 ;escolhe modo videos
   je text_azar_count
   jmp tela_giro4
   ret 
-mov cx, ax
+;................
+  tela_giro4:				  		
+mov ah, 0 ;escolhe modo videos
+  	mov al, 13h ;modo VGA
+  	int 10h
+  
+  	mov ah, 0xb ;escolhe cor da tela
+  	mov bh, 0
+  	mov bl, 0;cor da tela
+  	int 10h
+  	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,1 ;row
+	mov dl,15 ;column
+	mov bl,10
+	int 10h
+	mov si,lucky
+	call printf
+	
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,12 ;column
+	mov bl,14
+	int 10h
+	mov si,str2
+	call printf
+	; call delay1s
+	; call delay1s
+	; call delay1s
+  call getchar
+  mov cx, ax
+  	 mov ah,02h
+  mov dh,17 ;row
+  mov dl,20 ;column
+  mov bl,14
+  int 10h
+  
 call putchar
   call getchar
    cmp al, 0x0d
     je comparar_count
-    
-  jmp jogo_t_count
+	
+	jmp jogo_t_count
+  
+  
+  ret
 
 comparar_count:
   mov ax, cx
