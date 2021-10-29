@@ -5,9 +5,10 @@ jmp 0x0000:start
 ;utilizar o método de shift left (hexadecimal)
 ;e somar o offset no adress base, para rodarmos o kernel.
 
-runningKernel db 'Rodando Kernel...', 0
-
-
+runningKernel db 'Ma oi, ma vem pra ca vai pra la vem...', 0
+quemquerdinheiro db 'Quem quer dinheiro?...',0
+aviao db 'Olha o aviaozinho...',0
+estacerto db 'Esta certo disso? Posso perguntar?',0
 print_string:
 	lodsb
 	cmp al,0
@@ -23,7 +24,7 @@ print_string:
 	mov cx, 0
 		.time:
 			inc cx
-			cmp cx, 10000
+			cmp cx, 100000
 			jne .time
 
 	cmp dx, 1000
@@ -49,6 +50,12 @@ start:
 
 
     mov si, runningKernel
+    call print_string
+    mov si, quemquerdinheiro
+    call print_string
+    mov si, aviao
+    call print_string
+    mov si, estacerto
     call print_string
 
 

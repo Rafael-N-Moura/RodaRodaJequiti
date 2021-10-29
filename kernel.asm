@@ -27,6 +27,7 @@ countries db '* Paises (4)',0
 get_back db '*Pressione a tecla ESC se quiser voltar',0
 bolo db 'a','b','c','d'
 guessWord times 20 db 0
+contador times 1 db 0
 ;textoMenu
   tittle db 'Roda-Roda Jequiti',0
   play db 'JOGAR',0
@@ -863,6 +864,7 @@ finish:
   ret
 ;------------------------TUDO DA TELA BODY------------------------------------------
 jogo_t_body: ;
+
     call passou_de_fase_body
 mov ah, 0 ;escolhe modo videos
   	mov al, 13h ;modo VGA
@@ -998,6 +1000,7 @@ comparar_word1_body:
   add cx, cx
   add di, cx
   stosb
+
   jmp .done
   
   .done:
@@ -1024,6 +1027,7 @@ comparar_word2_body:
   add cx, cx
   add di, cx
   stosb
+
   jmp .done
 
   .done:
@@ -1048,6 +1052,7 @@ comparar_word3_body:
   add cx, cx
   add di, cx
   stosb
+
   jmp .done
   
   .done:
@@ -1203,6 +1208,12 @@ passou_de_fase_body:
   cmp cl, 1
   je prossegue_jogo
   ret
+
+; obrigar_guess_body:
+;   call guessing_word_body
+;   call passou_de_fase_body
+;   jmp obrigar_guess_body
+; ret
 
 ;------------------------TUDO DA TELA SPORTS------------------------------------------
 jogo_t_sports:
