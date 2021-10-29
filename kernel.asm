@@ -45,12 +45,12 @@ contador times 1 db 0
   dica_s db 'TEMA: Esportes',0
 ;t_tech
   w_tech1 db 'threads',0 ;7caracteres
-  w_tech2 db 'deadlock',0 ;8 caracteres
+  w_tech2 db 'teclado',0 ;8 caracteres
   w_tech3 db 'software',0 ;8caracteres
   dica_h db 'TEMA: Tecnologia',0
 ;t_countries
   w_count1 db 'belgica',0 ;7caracteres
-  w_count2 db 'mocambique',0 ;10 caracteres
+  w_count2 db 'mexico',0 ;10 caracteres
   w_count3 db 'noruega',0 ;7 caracteres
   dica_c db 'TEMA: Paises',0
       
@@ -62,10 +62,10 @@ sport1 db '_ _ _ _ _ _',0
 sport2 db '_ _ _ _ _ _ _',0
 sport3 db '_ _ _ _ _ _ _',0
 tech1  db '_ _ _ _ _ _ _',0
-tech2  db '_ _ _ _ _ _ _ _',0
+tech2  db '_ _ _ _ _ _ _',0
 tech3  db '_ _ _ _ _ _ _ _',0
 count1 db '_ _ _ _ _ _ _',0
-count2 db '_ _ _ _ _ _ _ _ _ _',0
+count2 db '_ _ _ _ _ _',0
 count3 db '_ _ _ _ _ _ _',0
 ;game_screen
  spin_r db '> Girar Roleta [1]',0
@@ -76,11 +76,13 @@ count3 db '_ _ _ _ _ _ _',0
 str1 db '........Girando..........',0
 str2 db 'Uma letra por R$:',0
 lucky db 'Que sorte!                ',0
-hazard db 'Que azar, voce perdeu tudo!',0
+hazard db 'Que azar, voce perdeu tudo! :(',0
+score_azar db 'Score R$: 0.',0
 empty db '                            ',0
-
-
-
+;fraseprogresso
+msg_fase db 'Voce passou de fase!',0
+current_score db 'Score atual R$: ',0
+next_stage db '........Carregando fase........',0
 start:
   xor ax, ax
   mov cx, ax
@@ -146,27 +148,208 @@ delay:
 	int 15h
 ret
 
-text_azar: ;funcao responsavel de tratar o caso azar (rand num gerando 0)
+
+
+clear:                   ; mov bl, color
+  ; set the cursor to top left-most corner of screen
+  mov dx, 0 
+  mov bh, 0      
+  mov ah, 0x2
+  int 0x10
+
+  ; print 2000 blank chars to clean  
+  mov cx, 2000 
+  mov bh, 0
+  mov al, 0x20 ; blank char
+  mov ah, 0x9
+  int 0x10
+  
+  ; reset cursor to top left-most corner of screen
+  mov dx, 0 
+  mov bh, 0      
+  mov ah, 0x2
+  int 0x10
+  ret
+  
+ 
+text_progresso_fase:
+mov ah, 0 ;escolhe modo videos
+  	mov al, 13h ;modo VGA
+  	int 10h
+  
+  	mov ah, 0xb ;escolhe cor da tela
+  	mov bh, 0
+  	mov bl, 0;cor da tela
+  	int 10h
+  	
+  	
 	mov ah,02h
 	mov dh,1 ;row
-	mov dl,15 ;column
-	mov bl,10
+	mov dl,11 ;column
+	mov bl,11
 	int 10h
-	mov si,empty
+	mov si,msg_fase
 	call printf
+	
+	mov ah,02h
+	mov dh,11 ;row
+	mov dl,6 ;column
+	mov bl,0xd
+	int 10h
+	mov si,next_stage
+	call print_string
 	
 	mov ah,02h
 	mov dh,15 ;row
 	mov dl,12 ;column
-	mov bl,12
+	mov bl,14
 	int 10h
-	mov si,str2
+	mov si,current_score
 	call printf
+	
+	
+	
 	call delay1s
 	call delay1s
 	call delay1s
 	
+	jmp prossegue_jogo
 ret 
+  
+text_azar_body: 
+	call clear
+	
+	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	mov bl,10
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,7 ;column
+	mov bl,12
+	int 10h
+	mov si,hazard
+	call printf
+	
+	mov ah,02h
+  	mov dh,4 ;row
+  	mov dl,31 ;column
+  	mov bl,14
+  	int 10h
+ 	mov si,  score_board
+  	call printf 
+  	
+  	
+	call delay1s
+	call delay1s
+	call delay1s
+	
+	jmp jogo_t_body
+	
+ret 
+text_azar_sports: 
+	call clear
+	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	mov bl,10
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,7 ;column
+	mov bl,12
+	int 10h
+	mov si,hazard
+	call printf
+	
+	mov ah,02h
+  	mov dh,4 ;row
+  	mov dl,31 ;column
+  	mov bl,14
+  	int 10h
+ 	mov si,  score_board
+  	call printf 
+  	
+  	
+	call delay1s
+	call delay1s
+	call delay1s
+	jmp jogo_t_sports
+	
+ret 
+text_azar_tech: 
+	call clear
+	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	mov bl,10
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,7 ;column
+	mov bl,12
+	int 10h
+	mov si,hazard
+	call printf
+	
+	mov ah,02h
+  	mov dh,4 ;row
+  	mov dl,31 ;column
+  	mov bl,14
+  	int 10h
+ 	mov si,  score_board
+  	call printf 
+  	
+  	
+	call delay1s
+	call delay1s
+	call delay1s
+	jmp jogo_t_tech
+	
+ret 
+text_azar_count: 
+	call clear
+	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	mov bl,10
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,7 ;column
+	mov bl,12
+	int 10h
+	mov si,hazard
+	call printf
+	
+	mov ah,02h
+  	mov dh,4 ;row
+  	mov dl,31 ;column
+  	mov bl,14
+  	int 10h
+ 	mov si,  score_board
+  	call printf 
+  	
+  	
+	call delay1s
+	call delay1s
+	call delay1s
+	jmp jogo_t_count
+ret 
+
 
  	
 delay1s:                 ; 1 SEC DELAY
@@ -352,6 +535,7 @@ mov ah, 0 ;escolhe modo videos
   ;....................
 prossegue_jogo:
   call random_number_tema
+  
   mov al,dl
   add al,48
   cmp al,48
@@ -378,8 +562,6 @@ prossegue_jogo:
 	end_print_string:
 		ret
 
-
-  
   
 tela_up:
   call highlight_D_off
@@ -387,7 +569,7 @@ tela_up:
   call highlight_U_on
   call getchar
   cmp al, 13
-  je prossegue_jogo
+  je jogo_t_body
   cmp al, 's'
   je tela_middle
   jmp tela_up
@@ -560,7 +742,7 @@ endl:
 ret
 
 delchar:
-    mov al, 0x08                    
+    mov al, 0x08                
     call putchar
     mov al, ' '
     call putchar
@@ -953,16 +1135,26 @@ mov ah, 0 ;escolhe modo videos
   
   call getchar
   
+  
     cmp al, 27
     je zerar_tudo
     ;cmp al,49
     ;jump to spinning roulette screen
     cmp al,'1'
-    je tela_giro1 
+    je decisao_de_giro1 
     ;start guessing the three words
     cmp al, '2'
     je guessing_word_body
    ;jmp jogo_t_body
+   
+  decisao_de_giro1:
+  call random_number_0to9
+  mov al,dl
+  cmp al,0
+  je text_azar_body
+  jmp tela_giro1
+  ret 
+  
 mov cx, ax
 call putchar
   call getchar
@@ -971,6 +1163,7 @@ call putchar
    
     
   jmp jogo_t_body
+  
 
 
 comparar_body:
@@ -1206,7 +1399,7 @@ passou_de_fase_body:
   mov di, w_body3
   call strcmp_adaptada
   cmp cl, 1
-  je prossegue_jogo
+  je text_progresso_fase
   ret
 
 ; obrigar_guess_body:
@@ -1238,7 +1431,7 @@ mov ah, 0 ;escolhe modo videos
 	mov si, dica_s
 	call printf
 
-  mov ah,02h
+  	mov ah,02h
 	mov dh,7 ;row
 	mov dl,13 ;column
 	mov bl,15
@@ -1311,14 +1504,26 @@ mov ah, 0 ;escolhe modo videos
   
   call getchar
   
+   
+  
     cmp al, 27
     je zerar_tudo
-    cmp al,'1'
-    je tela_giro2
+    ;cmp al,49
     ;jump to spinning roulette screen
+    cmp al,'1'
+    je decisao_de_giro2 
+    ;start guessing the three words
     cmp al,'2' ;start guessing the three words
     je guessing_word_sport
    ;jmp jogo_t_body
+   
+  decisao_de_giro2:
+  call random_number_0to9
+  mov al,dl
+  cmp al,0
+  je text_azar_sports
+  jmp tela_giro2
+  ret 
 mov cx, ax
 call putchar
   call getchar
@@ -1554,7 +1759,7 @@ passou_de_fase_sport:
   mov di, w_sport3
   call strcmp_adaptada
   cmp cl, 1
-  je prossegue_jogo
+  je text_progresso_fase
   ret
 
 ;------------------------TUDO DA TELA TECH------------------------------------------
@@ -1651,15 +1856,28 @@ mov ah, 0 ;escolhe modo videos
   
   call getchar
   
+  
+  
     cmp al, 27
     je zerar_tudo
+    ;cmp al,49
+    ;jump to spinning roulette screen
     cmp al,'1'
-    je tela_giro3
+    je decisao_de_giro3
+    ;start guessing the three words
     cmp al, '2'
     je guessing_word_tech
     ;jump to spinning roulette screen
     ;cmp al,50 ;start guessing the three words
    ;jmp jogo_t_body
+   
+  decisao_de_giro3:
+  call random_number_0to9
+  mov al,dl
+  cmp al,0
+  je text_azar_tech
+  jmp tela_giro3
+  ret 
 mov cx, ax
 call putchar
   call getchar
@@ -1897,7 +2115,7 @@ passou_de_fase_tech:
   mov di, w_tech3
   call strcmp_adaptada
   cmp cl, 1
-  je prossegue_jogo
+   je text_progresso_fase
   ret
  
  
@@ -1995,14 +2213,27 @@ mov ah, 0 ;escolhe modo videos
   
   call getchar
   
+  
+  
     cmp al, 27
     je zerar_tudo
-    cmp al,'1'
-    je tela_giro4
+    ;cmp al,49
     ;jump to spinning roulette screen
+    cmp al,'1'
+    je decisao_de_giro4
+    ;start guessing the three words
     cmp al,'2' ;start guessing the three words
     je guessing_word_count
    ;jmp jogo_t_body
+   
+   
+  decisao_de_giro4:
+  call random_number_0to9
+  mov al,dl
+  cmp al,0
+  je text_azar_count
+  jmp tela_giro4
+  ret 
 mov cx, ax
 call putchar
   call getchar
@@ -2239,6 +2470,6 @@ passou_de_fase_count:
   mov di, w_count3
   call strcmp_adaptada
   cmp cl, 1
-  je prossegue_jogo
+  je text_progresso_fase
   ret
  jmp $
