@@ -40,17 +40,17 @@ contador times 1 db 0
   dica_b db 'TEMA: Partes do corpo humano ',0
 ;t_sport
   w_sport1 db 'hockey',0 ;6caracteres
-  w_sport2 db 'esgrima',0 ;9 caracteres
+  w_sport2 db 'esgrima',0 ;7 caracteres
   w_sport3 db 'boliche',0 ;7caracteres
   dica_s db 'TEMA: Esportes',0
 ;t_tech
   w_tech1 db 'threads',0 ;7caracteres
-  w_tech2 db 'teclado',0 ;8 caracteres
+  w_tech2 db 'teclado',0 ;7 caracteres
   w_tech3 db 'software',0 ;8caracteres
   dica_h db 'TEMA: Tecnologia',0
 ;t_countries
   w_count1 db 'belgica',0 ;7caracteres
-  w_count2 db 'mexico',0 ;10 caracteres
+  w_count2 db 'mexico',0 ;6 caracteres
   w_count3 db 'noruega',0 ;7 caracteres
   dica_c db 'TEMA: Paises',0
       
@@ -524,6 +524,7 @@ strcmp_adaptada:              ; mov si, string1, mov di, string2
     jne .notequal
     cmp al, 0
     je .equal
+    inc dx
     inc di
     jmp .loop1
   .notequal:
@@ -888,6 +889,7 @@ finish:
 jogo_t_body: ;
 
     call passou_de_fase_body
+
 mov ah, 0 ;escolhe modo videos
   	mov al, 13h ;modo VGA
   	int 10h
@@ -965,6 +967,8 @@ mov ah, 0 ;escolhe modo videos
   
  mov si,  score_board
   call printf 
+
+      call limite_de_letras_body
   
   
   mov ah,02h
@@ -1262,6 +1266,7 @@ zerar_words_body:
 
 ;Verifica se o jogador já acertou as 3 palavras
 passou_de_fase_body:
+  xor dx, dx
   mov si, body1
   mov di, w_body1
   call strcmp_adaptada
@@ -1283,11 +1288,27 @@ passou_de_fase_body:
   je text_progresso_fase
   ret
 
-; obrigar_guess_body:
-;   call guessing_word_body
-;   call passou_de_fase_body
-;   jmp obrigar_guess_body
-; ret
+limite_de_letras_body:
+  xor dx, dx
+  mov si, body1
+  mov di, w_body1
+  call strcmp_adaptada
+  mov si,body2
+  mov di, w_body2
+  call strcmp_adaptada
+  mov si,body3
+  mov di, w_body3
+  call strcmp_adaptada
+  cmp dx, 14
+  jnl obrigar_guess_body
+  ret
+
+
+obrigar_guess_body:
+  call guessing_word_body
+  call passou_de_fase_body
+  jmp obrigar_guess_body
+ret
 
 ;------------------------TUDO DA TELA SPORTS------------------------------------------
 jogo_t_sports:
@@ -1376,8 +1397,10 @@ mov ah, 0 ;escolhe modo videos
   
   mov si,  score_board
   call printf
-
-	 mov ah,02h
+  
+  call limite_de_letras_sport
+	
+  mov ah,02h
   mov dh,20 ;row
   mov dl,30 ;column
   mov bl,14
@@ -1687,6 +1710,27 @@ passou_de_fase_sport:
   je text_progresso_fase
   ret
 
+limite_de_letras_sport:
+  xor dx, dx
+  mov si, sport1
+  mov di, w_sport1
+  call strcmp_adaptada
+  mov si,sport2
+  mov di, w_sport2
+  call strcmp_adaptada
+  mov si,sport3
+  mov di, w_sport3
+  call strcmp_adaptada
+  cmp dx, 14
+  jnl obrigar_guess_sport
+ret
+
+obrigar_guess_sport:
+  call guessing_word_sport
+  call passou_de_fase_sport
+  jmp obrigar_guess_sport
+ret
+
 ;------------------------TUDO DA TELA TECH------------------------------------------
 jogo_t_tech: ;
 call passou_de_fase_tech
@@ -1773,7 +1817,9 @@ mov ah, 0 ;escolhe modo videos
   mov si,  score_board
   call printf
 
- 	 mov ah,02h
+  call limite_de_letras_tech
+
+ 	mov ah,02h
   mov dh,20 ;row
   mov dl,30 ;column
   mov bl,14
@@ -1896,7 +1942,7 @@ comparar_word2_tech:
   xor cx, cx
   xor dx, dx
   .loop:
-  cmp dx, 8
+  cmp dx, 7
   je .done
   cmp al, [si]
   je .substituir_letra
@@ -2045,7 +2091,7 @@ substituir_word1_tech:
     mov di, tech2
     xor cx, cx
     .word2:
-    cmp cx, 8
+    cmp cx, 7
     je .transicao2
     stosb
     inc di
@@ -2087,7 +2133,27 @@ passou_de_fase_tech:
   cmp cl, 1
    je text_progresso_fase
   ret
+
+limite_de_letras_tech:
+  xor dx, dx
+  mov si, tech1
+  mov di, w_tech1
+  call strcmp_adaptada
+  mov si,tech2
+  mov di, w_tech2
+  call strcmp_adaptada
+  mov si,tech3
+  mov di, w_tech3
+  call strcmp_adaptada
+  cmp dx, 16
+  jnl obrigar_guess_tech
+  ret
  
+ obrigar_guess_tech:
+  call guessing_word_tech
+  call passou_de_fase_tech
+  jmp obrigar_guess_tech
+ret
  
 ;------------------------TUDO DA TELA COUNTRIES------------------------------------------  
 jogo_t_count: 
@@ -2175,7 +2241,9 @@ mov ah, 0 ;escolhe modo videos
   mov si,  score_board
   call printf
 
-	 mov ah,02h
+  call limite_de_letras_count
+
+	mov ah,02h
   mov dh,20 ;row
   mov dl,30 ;column
   mov bl,14
@@ -2247,7 +2315,7 @@ mov ah, 0 ;escolhe modo videos
 	; call delay1s
   call getchar
   mov cx, ax
-  	 mov ah,02h
+  mov ah,02h
   mov dh,17 ;row
   mov dl,20 ;column
   mov bl,14
@@ -2303,7 +2371,7 @@ comparar_word2_count:
   xor cx, cx
   xor dx, dx
   .loop:
-  cmp dx, 10
+  cmp dx, 6
   je .done
   cmp al, [si]
   je .substituir_letra
@@ -2451,7 +2519,7 @@ substituir_word1_count:
     mov di, count2
     xor cx, cx
     .word2:
-    cmp cx, 10
+    cmp cx, 6
     je .transicao2
     stosb
     inc di
@@ -2493,4 +2561,26 @@ passou_de_fase_count:
   cmp cl, 1
   je text_progresso_fase
   ret
+
+limite_de_letras_count:
+  xor dx, dx
+  mov si, count1
+  mov di, w_count1
+  call strcmp_adaptada
+  mov si,count2
+  mov di, w_count2
+  call strcmp_adaptada
+  mov si,count3
+  mov di, w_count3
+  call strcmp_adaptada
+  cmp dx, 12
+  jnl obrigar_guess_count
+  ret
+
+obrigar_guess_count:
+  call guessing_word_count
+  call passou_de_fase_count
+  jmp obrigar_guess_count
+ret
+
  jmp $
