@@ -67,6 +67,7 @@ tech3  db '_ _ _ _ _ _ _ _',0
 count1 db '_ _ _ _ _ _ _',0
 count2 db '_ _ _ _ _ _',0
 count3 db '_ _ _ _ _ _ _',0
+
 ;game_screen
  spin_r db '> Girar Roleta [1]',0
  exit db '> Exit [ESC]',0
@@ -83,6 +84,18 @@ empty db '                            ',0
 msg_fase db 'Voce passou de fase!',0
 current_score db 'Score atual R$: ',0
 next_stage db '........Carregando fase........',0
+
+;variaveis auxiliares de pontuacao
+show_score times 10 db 0
+soma_total dw 0
+temp dw 0
+salva_rand dw 0
+show_valor_giro times 10 db 0
+empty_s db '',0
+
+
+
+
 start:
   xor ax, ax
   mov cx, ax
@@ -208,6 +221,18 @@ mov ah, 0 ;escolhe modo videos
 	call printf
 	
 	
+	;mostrar score atual
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,28 ;column
+	mov bl,15
+	int 10h
+	mov si,show_score
+	call printf
+	
+	
+	
+	
 	
 	call delay1s
 	call delay1s
@@ -237,12 +262,13 @@ text_azar_body:
 	
 	mov ah,02h
   	mov dh,4 ;row
-  	mov dl,31 ;column
+  	mov dl,28 ;column
   	mov bl,14
   	int 10h
- 	mov si,  score_board
+ 	mov si,  score_azar
   	call printf 
   	
+  	call pontuacao_zerada
   	
 	call delay1s
 	call delay1s
@@ -271,13 +297,13 @@ text_azar_sports:
 	
 	mov ah,02h
   	mov dh,4 ;row
-  	mov dl,31 ;column
+  	mov dl,28 ;column
   	mov bl,14
   	int 10h
- 	mov si,  score_board
+ 	mov si,  score_azar
   	call printf 
   	
-  	
+  	call pontuacao_zerada
 	call delay1s
 	call delay1s
 	call delay1s
@@ -304,12 +330,13 @@ text_azar_tech:
 	
 	mov ah,02h
   	mov dh,4 ;row
-  	mov dl,31 ;column
+  	mov dl,28 ;column
   	mov bl,14
   	int 10h
- 	mov si,  score_board
+ 	mov si,  score_azar
   	call printf 
   	
+  	call pontuacao_zerada 
   	
 	call delay1s
 	call delay1s
@@ -337,13 +364,14 @@ text_azar_count:
 	
 	mov ah,02h
   	mov dh,4 ;row
-  	mov dl,31 ;column
+  	mov dl,28 ;column
   	mov bl,14
   	int 10h
- 	mov si,  score_board
+ 	mov si,  score_azar
   	call printf 
   	
-  	
+  	call pontuacao_zerada
+  
 	call delay1s
 	call delay1s
 	call delay1s
@@ -885,12 +913,116 @@ modo_video:
  
 finish:
   ret
+  
+  ;converter inteiro para string
+  
+  tostring:						
+	push di
+	.loop1:
+		cmp ax, 0
+		je .endloop1
+		xor dx, dx
+		mov bx, 10
+		div bx		
+		xchg ax, dx				
+		add ax, 48			
+		stosb
+		xchg ax, dx
+		jmp .loop1
+	.endloop1:
+	pop si
+	cmp si, di
+	jne .done
+	mov al, 48
+	stosb
+	.done:
+		mov al, 0
+		stosb
+		call reverse
+		ret
+		
+		;printar ao inverso
+reverse:
+    mov di, si
+    xor cx, cx
+
+    .loop1:
+        lodsb
+        cmp al, 0
+        je .endloop1
+        inc cl
+        push ax
+        jmp .loop1
+    
+    .endloop1:
+
+    .loop2:
+        cmp cl, 0
+        je .endloop2
+        dec cl
+        pop ax
+        stosb
+        jmp .loop2
+
+        .endloop2:
+        ret		
+		
+pontuacao: ;funcao responsavel por fazer o acrescimo da pontuacao chamar em jogo_t_...
+	mov dl, byte[salva_rand]
+	mov byte[temp],dl
+  	mov ax,[temp]
+  	imul ax,100
+  	add [soma_total],ax
+  	mov ax, [soma_total]
+  	mov di,show_score
+  	call tostring ;transformando a string show_score em string....
+ ret
+ 
+ pontuacao_zerada: ;funcao responsavel por zerar a pontuacao// chamar em todo text_azar...
+ 
+ 	mov ax,0
+  	mov [soma_total],ax
+  	mov di,show_score
+  	call tostring ;transformando a string show_score em string....
+  ret
+  	
+printa_valor_de_giro: ;chamar essa funcao para cada tela....
+
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,30;column
+	mov bl,14
+	int 10h
+	
+	
+	;isso sera uma funcao (showscore)
+	mov di,show_valor_giro
+	mov ax,[salva_rand]
+	imul ax,100
+	call tostring
+	mov si,show_valor_giro
+	call printf
+	
+	 ;call delay1s
+	 ;call delay1s
+	 ;call delay1s
+	 
+       ;so p posicionar o cursor
+	mov ah,02h
+	mov dh,19 ;row
+	mov dl,21 ;column
+	mov bl,14
+	int 10h
+	mov si,empty_s
+	call printf
+	
+ret
 ;------------------------TUDO DA TELA BODY------------------------------------------
 jogo_t_body: ;
 
     call passou_de_fase_body
 
-mov ah, 0 ;escolhe modo videos
+        mov ah, 0 ;escolhe modo videos
   	mov al, 13h ;modo VGA
   	int 10h
   
@@ -961,12 +1093,21 @@ mov ah, 0 ;escolhe modo videos
   
   mov ah,02h
   mov dh,4 ;row
-  mov dl,31 ;column
+  mov dl,28 ;column
   mov bl,14
   int 10h
   
  mov si,  score_board
-  call printf 
+ call printf 
+  
+  mov ah,02h
+  mov dh,4 ;row
+  mov dl,35;column
+  mov bl,14
+  int 10h
+  
+  mov si,  show_score
+  call printf
 
       call limite_de_letras_body
   
@@ -996,9 +1137,10 @@ mov ah, 0 ;escolhe modo videos
   
   decisao_de_giro1:
   call random_number_0to9
+  mov byte[salva_rand],dl
   mov al,dl
   cmp al,0
-  je text_azar_body
+  je text_azar_body ;o score sera zerado...
   jmp tela_giro1
   ret 
 
@@ -1036,9 +1178,10 @@ mov ah, 0 ;escolhe modo videos
 	int 10h
 	mov si,str2
 	call printf
-	; call delay1s
-	; call delay1s
-	; call delay1s
+	
+	;mostrar valor de giro...
+	call printa_valor_de_giro
+	 
 
   call getchar
   mov cx, ax
@@ -1078,7 +1221,7 @@ comparar_word1_body:
   add cx, cx
   add di, cx
   stosb
-
+  call pontuacao
   jmp .done
   
   .done:
@@ -1105,7 +1248,7 @@ comparar_word2_body:
   add cx, cx
   add di, cx
   stosb
-
+  call pontuacao
   jmp .done
 
   .done:
@@ -1130,7 +1273,7 @@ comparar_word3_body:
   add cx, cx
   add di, cx
   stosb
-
+  call pontuacao
   jmp .done
   
   .done:
@@ -1389,14 +1532,22 @@ mov ah, 0 ;escolhe modo videos
   
   mov ah,02h
   mov dh,4 ;row
-  mov dl,31 ;column
+  mov dl,28 ;column
   mov bl,14
   int 10h
   
-  
-  
   mov si,  score_board
+  call printf 
+  
+  mov ah,02h
+  mov dh,4 ;row
+  mov dl,35;column
+  mov bl,14
+  int 10h
+  
+  mov si,  show_score
   call printf
+
   
   call limite_de_letras_sport
 	
@@ -1428,6 +1579,7 @@ mov ah, 0 ;escolhe modo videos
 	
  decisao_de_giro2:
   call random_number_0to9
+  mov byte[salva_rand],dl
   mov al,dl
   cmp al,0
   je text_azar_sports
@@ -1466,6 +1618,10 @@ mov ah, 0 ;escolhe modo videos
 	int 10h
 	mov si,str2
 	call printf
+	
+	;mostrar valor de giro...
+	call printa_valor_de_giro
+	
 	; call delay1s
 	; call delay1s
 	; call delay1s
@@ -1508,8 +1664,9 @@ comparar_word1_sports:
   add cx, cx
   add di, cx
   stosb
+   call pontuacao
   jmp .done
-  
+
   .done:
   ret
 
@@ -1532,8 +1689,8 @@ comparar_word2_sports:
   add cx, cx
   add di, cx
   stosb
+   call pontuacao
   jmp .done
-  
   .done:
   ret
 
@@ -1556,8 +1713,8 @@ comparar_word3_sports:
   add cx, cx
   add di, cx
   stosb
+  call pontuacao
   jmp .done
-  
   .done:
   ret
 
@@ -1806,16 +1963,24 @@ mov ah, 0 ;escolhe modo videos
   mov si,exit
   call printf
   
-  mov ah,02h
+ mov ah,02h
   mov dh,4 ;row
-  mov dl,31 ;column
+  mov dl,28 ;column
   mov bl,14
   int 10h
   
+ mov si,  score_board
+ call printf 
   
+  mov ah,02h
+  mov dh,4 ;row
+  mov dl,35;column
+  mov bl,14
+  int 10h
   
-  mov si,  score_board
+  mov si,  show_score
   call printf
+
 
   call limite_de_letras_tech
 
@@ -1849,6 +2014,7 @@ mov ah, 0 ;escolhe modo videos
 
   decisao_de_giro3:
   call random_number_0to9
+  mov byte[salva_rand],dl
   mov al,dl
   cmp al,0
   je text_azar_tech
@@ -1887,9 +2053,18 @@ mov ah, 0 ;escolhe modo videos
 	int 10h
 	mov si,str2
 	call printf
+	
+	
+	;mostrar valor de giro...
+	call printa_valor_de_giro
+	
+	
 	; call delay1s
 	; call delay1s
 	; call delay1s
+	
+	
+	
   call getchar
   mov cx, ax
 call putchar
@@ -1929,8 +2104,8 @@ comparar_word1_tech:
   add cx, cx
   add di, cx
   stosb
+  call pontuacao
   jmp .done
-  
   .done:
   ret
 
@@ -1955,8 +2130,8 @@ comparar_word2_tech:
   add cx, cx
   add di, cx
   stosb
+  call pontuacao
   jmp .done
-
   .done:
     ret	
 
@@ -1979,8 +2154,8 @@ comparar_word3_tech:
   add cx, cx
   add di, cx
   stosb
+  call pontuacao
   jmp .done
-  
   .done:
   ret
 
@@ -2230,16 +2405,24 @@ mov ah, 0 ;escolhe modo videos
   mov si,exit
   call printf
   
-  mov ah,02h
+ mov ah,02h
   mov dh,4 ;row
-  mov dl,31 ;column
+  mov dl,28 ;column
   mov bl,14
   int 10h
   
+ mov si,  score_board
+ call printf 
   
+  mov ah,02h
+  mov dh,4 ;row
+  mov dl,35;column
+  mov bl,14
+  int 10h
   
-  mov si,  score_board
+  mov si,  show_score
   call printf
+
 
   call limite_de_letras_count
 
@@ -2272,6 +2455,7 @@ mov ah, 0 ;escolhe modo videos
 
   decisao_de_giro4:
   call random_number_0to9
+  mov byte[salva_rand],dl
   mov al,dl
   cmp al,0
   je text_azar_count
@@ -2310,6 +2494,12 @@ mov ah, 0 ;escolhe modo videos
 	int 10h
 	mov si,str2
 	call printf
+	
+	;mostrar valor de giro...
+	call printa_valor_de_giro
+	
+	
+	
 	; call delay1s
 	; call delay1s
 	; call delay1s
@@ -2358,8 +2548,8 @@ comparar_word1_count:
   add cx, cx
   add di, cx
   stosb
+  call pontuacao
   jmp .done
-  
   .done:
   ret
 
@@ -2384,8 +2574,8 @@ comparar_word2_count:
   add cx, cx
   add di, cx
   stosb
+  call pontuacao
   jmp .done
-
   .done:
     ret	
 
@@ -2408,8 +2598,8 @@ comparar_word3_count:
   add cx, cx
   add di, cx
   stosb
+  call pontuacao
   jmp .done
-  
   .done:
   ret
  
