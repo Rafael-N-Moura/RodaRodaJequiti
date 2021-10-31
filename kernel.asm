@@ -28,26 +28,31 @@ get_back db '*Pressione a tecla ESC se quiser voltar',0
 bolo db 'a','b','c','d'
 guessWord times 20 db 0
 contador times 1 db 0
+
 ;textoMenu
   tittle db 'Roda-Roda Jequiti',0
   play db 'JOGAR',0
   instruct db'Escolher tema',0
   credits db 'CREDITOS',0
+
 ;t_body
   w_body1 db 'abdomen',0 
   w_body2 db 'lingua',0
   w_body3 db 'laringe',0
   dica_b db 'TEMA: Partes do corpo humano ',0
+
 ;t_sport
   w_sport1 db 'hockey',0 ;6caracteres
   w_sport2 db 'esgrima',0 ;7 caracteres
   w_sport3 db 'boliche',0 ;7caracteres
   dica_s db 'TEMA: Esportes',0
+  
 ;t_tech
   w_tech1 db 'threads',0 ;7caracteres
   w_tech2 db 'teclado',0 ;7 caracteres
   w_tech3 db 'software',0 ;8caracteres
   dica_h db 'TEMA: Tecnologia',0
+  
 ;t_countries
   w_count1 db 'belgica',0 ;7caracteres
   w_count2 db 'mexico',0 ;6 caracteres
@@ -73,13 +78,15 @@ count3 db '_ _ _ _ _ _ _',0
  exit db '> Exit [ESC]',0
  guess db '> Advinhar palavra [2]',0
  score_board db'Score: ',0
- ;telagiro
+ 
+;telagiro
 str1 db '........Girando..........',0
 str2 db 'Uma letra por R$:',0
 lucky db 'Que sorte!                ',0
 hazard db 'Que azar, voce perdeu tudo! :(',0
 score_azar db 'Score R$: 0.',0
-empty db '                            ',0
+
+
 ;fraseprogresso
 msg_fase db 'Voce passou de fase!',0
 current_score db 'Score atual R$: ',0
@@ -91,9 +98,7 @@ soma_total dw 0
 temp dw 0
 salva_rand dw 0
 show_valor_giro times 10 db 0
-empty_s db '',0
-
-
+empty_s db '',0 ;usado apenas p setar o cursor
 
 
 start:
@@ -1017,6 +1022,12 @@ printa_valor_de_giro: ;chamar essa funcao para cada tela....
 	call printf
 	
 ret
+
+acumula_valor_guess_words: ;inserir o valor da palavra antes de chamar a funcao
+  add [soma_total],ax
+  mov ax,[soma_total]
+  mov di,show_score
+ ret 
 ;------------------------TUDO DA TELA BODY------------------------------------------
 jogo_t_body: ;
 
@@ -1290,6 +1301,9 @@ guessing_word_body:
   jmp .igual1
 
   .igual1:
+  mov ax,1500
+  call acumula_valor_guess_words
+  call tostring
   call substituir_word1_body
   jmp jogo_t_body
 
@@ -1302,7 +1316,11 @@ guessing_word_body:
   je .neigual2
   jmp .igual2
 
+ 
   .igual2:
+  mov ax,800
+  call acumula_valor_guess_words
+  call tostring
   call substituir_word2_body
   jmp jogo_t_body
 
@@ -1315,6 +1333,9 @@ guessing_word_body:
   jmp .igual3
 
   .igual3:
+  mov ax,1800
+  call acumula_valor_guess_words
+  call tostring
   call substituir_word3_body
   jmp jogo_t_body
 
@@ -1729,6 +1750,9 @@ guessing_word_sport:
   jmp .igual1
 
   .igual1:
+  mov ax,1000
+  call acumula_valor_guess_words
+  call tostring
   call substituir_word1_sport
   jmp jogo_t_sports
 
@@ -1742,6 +1766,9 @@ guessing_word_sport:
   jmp .igual2
 
   .igual2:
+  mov ax,1500
+  call acumula_valor_guess_words
+  call tostring
   call substituir_word2_sport
   jmp jogo_t_sports
 
@@ -1754,6 +1781,9 @@ guessing_word_sport:
   jmp .igual3
 
   .igual3:
+  mov ax,2000      ;achei uma palavra dificil coloquei 2k...
+  call acumula_valor_guess_words
+  call tostring
   call substituir_word3_sport
   jmp jogo_t_sports
 
@@ -2170,6 +2200,9 @@ guessing_word_tech:
   jmp .igual1
 
   .igual1:
+  mov ax,1650
+  call acumula_valor_guess_words 
+  call tostring
   call substituir_word1_tech
   jmp jogo_t_tech
 
@@ -2183,6 +2216,9 @@ guessing_word_tech:
   jmp .igual2
 
   .igual2:
+  mov ax,1100
+  call acumula_valor_guess_words
+  call tostring
   call substituir_word2_tech
   jmp jogo_t_tech
 
@@ -2195,6 +2231,9 @@ guessing_word_tech:
   jmp .igual3
 
   .igual3:
+  mov ax ,1200
+  call acumula_valor_guess_words
+  call tostring
   call substituir_word3_tech
   jmp jogo_t_tech
 
@@ -2614,6 +2653,9 @@ guessing_word_count:
   jmp .igual1
 
   .igual1:
+  mov ax,1450
+  call acumula_valor_guess_words
+  call tostring
   call substituir_word1_count
   jmp jogo_t_count
 
@@ -2627,6 +2669,9 @@ guessing_word_count:
   jmp .igual2
 
   .igual2:
+  mov ax,1000
+  call acumula_valor_guess_words
+  call tostring
   call substituir_word2_count
   jmp jogo_t_count
 
@@ -2639,6 +2684,9 @@ guessing_word_count:
   jmp .igual3
 
   .igual3:
+  mov ax,1590
+  call acumula_valor_guess_words
+  call tostring
   call substituir_word3_count
   jmp jogo_t_count
 
