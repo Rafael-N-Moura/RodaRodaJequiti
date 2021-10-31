@@ -569,6 +569,27 @@ strcmp_adaptada:              ; mov si, string1, mov di, string2
     mov cl, 1
     ret
 
+  strcmp_adaptada2:              ; mov si, string1, mov di, string2
+  .bolodearroz:
+    lodsb
+    cmp al, 32
+    je .bolodearroz
+    cmp al, byte[di]
+    je .increase
+    cmp al, 0
+    je .equal500
+    inc di
+    jmp .bolodearroz
+  .increase:
+    ;clc
+    inc dx
+    jmp .bolodearroz
+  .equal500:
+    ;stc
+    ret
+
+
+
 
 
 gets:
@@ -1207,9 +1228,15 @@ call putchar
 
 comparar_body:
   mov ax, cx
+  push ax
   call comparar_word1_body
+  pop ax
+  push ax
   call comparar_word2_body
+  pop ax
+  push ax
   call comparar_word3_body
+  pop ax
   jmp jogo_t_body
 ret
 
@@ -1239,6 +1266,7 @@ comparar_word1_body:
   ret
 
 comparar_word2_body:
+  
  xor di, di
   xor si, si
   mov di, body2
@@ -1266,6 +1294,7 @@ comparar_word2_body:
     ret	
 
 comparar_word3_body:
+
   mov di, body3
   mov si, w_body3
   xor cx, cx
@@ -1463,7 +1492,7 @@ limite_de_letras_body:
   mov si,body3
   mov di, w_body3
   call strcmp_adaptada
-  cmp dx, 14
+  cmp dx, 12
   jnl obrigar_guess_body
   ret
 
@@ -1660,9 +1689,15 @@ call putchar
 
 comparar_sport:
   mov ax, cx
+  push ax
   call comparar_word1_sports
+  pop ax
+  push ax
   call comparar_word2_sports
+  pop ax
+  push ax
   call comparar_word3_sports
+  pop ax
   jmp jogo_t_sports
 ret
 
@@ -2109,9 +2144,15 @@ call putchar
 
 comparar_tech:
   mov ax, cx
+  push ax
   call comparar_word1_tech
+  pop ax
+  push ax
   call comparar_word2_tech
+  pop ax
+  push ax
   call comparar_word3_tech
+  pop ax
   jmp jogo_t_tech
 ret
 
@@ -2352,15 +2393,23 @@ limite_de_letras_tech:
   xor dx, dx
   mov si, tech1
   mov di, w_tech1
-  call strcmp_adaptada
-  mov si,tech2
-  mov di, w_tech2
-  call strcmp_adaptada
-  mov si,tech3
-  mov di, w_tech3
-  call strcmp_adaptada
-  cmp dx, 16
-  jnl obrigar_guess_tech
+  call strcmp_adaptada2
+  ; mov si,tech2
+  ; mov di, w_tech2
+  ; call strcmp_adaptada2
+  ; mov si,tech3
+  ; mov di, w_tech3
+  ; call strcmp_adaptada2
+  mov al, dl
+   mov ah,02h
+  mov dh,15 ;row
+  mov dl,12 ;column
+  mov bl,15
+  int 10h
+  
+  call putchar
+  ; cmp dx, 10
+  ; jnl obrigar_guess_tech
   ret
  
  obrigar_guess_tech:
@@ -2562,9 +2611,15 @@ call putchar
 
 comparar_count:
   mov ax, cx
+  push ax
   call comparar_word1_count
+  pop ax
+  push ax
   call comparar_word2_count
+  pop ax
+  push ax
   call comparar_word3_count
+  pop ax
   jmp jogo_t_count
 ret
 
