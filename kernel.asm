@@ -395,6 +395,7 @@ delay1s:                 ; 1 SEC DELAY
 
   ;zera tudo caso o jogador perca
   zerar_tudo:
+    call pontuacao_zerada
     call zerar_words_body
     call zerar_words_sport
     call zerar_words_tech
