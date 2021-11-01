@@ -9,6 +9,29 @@ runningKernel db 'Ma oi, ma vem pra ca vai pra la vem...', 0
 quemquerdinheiro db 'Quem quer dinheiro?...',0
 aviao db 'Olha o aviaozinho...',0
 estacerto db 'Esta certo disso? Posso perguntar?',0
+
+limpaTela:
+;; Limpa a tela dos caracteres colocados pela BIOS
+	; Set the cursor to top left-most corner of screen
+	mov dx, 0 
+    mov bh, 0      
+    mov ah, 0x2
+    int 0x10
+
+    ; print 2000 blanck chars to clean  
+    mov cx, 2000 
+    mov bh, 0
+    mov al, 0x20 ; blank char
+    mov ah, 0x9
+    int 0x10
+    
+    ;Reset cursor to top left-most corner of screen
+    mov dx, 0 
+    mov bh, 0      
+    mov ah, 0x2
+    int 0x10
+ret
+
 print_string:
 	lodsb
 	cmp al,0
@@ -47,6 +70,8 @@ start:
 
 
     ;parte pra printar as mensagens que quisermos
+    mov bl, 6
+    call limpaTela
 
 
     mov si, runningKernel
