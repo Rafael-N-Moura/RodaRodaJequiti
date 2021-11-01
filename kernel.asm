@@ -569,29 +569,28 @@ strcmp_adaptada:              ; mov si, string1, mov di, string2
     ;stc
     mov cl, 1
     ret
-
+ 
   strcmp_adaptada2:              ; mov si, string1, mov di, string2
   .bolodearroz:
     lodsb
     cmp al, 32
     je .bolodearroz
-    cmp al, byte[di]
-    je .increase
     cmp al, 0
     je .equal500
+    cmp al, byte[di]
+    je .increase
+    
     inc di
     jmp .bolodearroz
   .increase:
     ;clc
-    inc dx
+    inc dl
+    inc di
     jmp .bolodearroz
+    
   .equal500:
     ;stc
     ret
-
-
-
-
 
 gets:
     xor cx, cx
@@ -1483,17 +1482,17 @@ passou_de_fase_body:
   ret
 
 limite_de_letras_body:
-  xor dx, dx
+  xor dl, dl
   mov si, body1
   mov di, w_body1
-  call strcmp_adaptada
+  call strcmp_adaptada2
   mov si,body2
   mov di, w_body2
-  call strcmp_adaptada
+  call strcmp_adaptada2
   mov si,body3
   mov di, w_body3
-  call strcmp_adaptada
-  cmp dx, 12
+  call strcmp_adaptada2
+  cmp dl, 10
   jnl obrigar_guess_body
   ret
 
@@ -1934,17 +1933,17 @@ passou_de_fase_sport:
   ret
 
 limite_de_letras_sport:
-  xor dx, dx
+  xor dl, dl
   mov si, sport1
   mov di, w_sport1
-  call strcmp_adaptada
+  call strcmp_adaptada2
   mov si,sport2
   mov di, w_sport2
-  call strcmp_adaptada
+  call strcmp_adaptada2
   mov si,sport3
   mov di, w_sport3
-  call strcmp_adaptada
-  cmp dx, 14
+  call strcmp_adaptada2
+  cmp dl, 12
   jnl obrigar_guess_sport
 ret
 
@@ -2391,26 +2390,18 @@ passou_de_fase_tech:
   ret
 
 limite_de_letras_tech:
-  xor dx, dx
+  xor dl, dl
   mov si, tech1
   mov di, w_tech1
   call strcmp_adaptada2
-  ; mov si,tech2
-  ; mov di, w_tech2
-  ; call strcmp_adaptada2
-  ; mov si,tech3
-  ; mov di, w_tech3
-  ; call strcmp_adaptada2
-  mov al, dl
-   mov ah,02h
-  mov dh,15 ;row
-  mov dl,12 ;column
-  mov bl,15
-  int 10h
-  
-  call putchar
-  ; cmp dx, 10
-  ; jnl obrigar_guess_tech
+  mov si,tech2
+  mov di, w_tech2
+  call strcmp_adaptada2
+  mov si,tech3
+  mov di, w_tech3
+  call strcmp_adaptada2
+   cmp dl, 12
+   jnl obrigar_guess_tech
   ret
  
  obrigar_guess_tech:
@@ -2857,17 +2848,17 @@ passou_de_fase_count:
   ret
 
 limite_de_letras_count:
-  xor dx, dx
+  xor dl, dl
   mov si, count1
   mov di, w_count1
-  call strcmp_adaptada
+  call strcmp_adaptada2
   mov si,count2
   mov di, w_count2
-  call strcmp_adaptada
+  call strcmp_adaptada2
   mov si,count3
   mov di, w_count3
-  call strcmp_adaptada
-  cmp dx, 12
+  call strcmp_adaptada2
+  cmp dl, 10
   jnl obrigar_guess_count
   ret
 
