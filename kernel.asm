@@ -25,9 +25,7 @@ health db '* Saude (2)',0
 tech db ' * Tecnologia (3)',0
 countries db '* Paises (4)',0
 get_back db '*Pressione a tecla ESC se quiser voltar',0
-bolo db 'a','b','c','d'
 guessWord times 20 db 0
-contador times 1 db 0
 
 ;textoMenu
   tittle db 'Roda-Roda Jequiti',0
@@ -166,8 +164,6 @@ delay:
 	int 15h
 ret
 
-
-
 clear:                   ; mov bl, color
   ; set the cursor to top left-most corner of screen
   mov dx, 0 
@@ -189,7 +185,6 @@ clear:                   ; mov bl, color
   int 0x10
   ret
   
- 
 text_progresso_fase:
 mov ah, 0 ;escolhe modo videos
   	mov al, 13h ;modo VGA
@@ -241,153 +236,13 @@ mov ah, 0 ;escolhe modo videos
 	
 	jmp prossegue_jogo
 ret 
-  
-text_azar_body: 
-	call clear
-	
-	
-	mov ah,02h
-	mov dh,8 ;row
-	mov dl,9 ;column
-	mov bl,10
-	int 10h
-	call coloured_letter
-	
-	mov ah,02h
-	mov dh,15 ;row
-	mov dl,7 ;column
-	mov bl,12
-	int 10h
-	mov si,hazard
-	call printf
-	
-	mov ah,02h
-  	mov dh,4 ;row
-  	mov dl,28 ;column
-  	mov bl,14
-  	int 10h
- 	mov si,  score_azar
-  	call printf 
-  	
-  	call pontuacao_zerada
-  	
-	call delay1s
-	call delay1s
-	call delay1s
-	
-	jmp jogo_t_body
-	
-ret 
-text_azar_sports: 
-	call clear
-	
-	mov ah,02h
-	mov dh,8 ;row
-	mov dl,9 ;column
-	mov bl,10
-	int 10h
-	call coloured_letter
-	
-	mov ah,02h
-	mov dh,15 ;row
-	mov dl,7 ;column
-	mov bl,12
-	int 10h
-	mov si,hazard
-	call printf
-	
-	mov ah,02h
-  	mov dh,4 ;row
-  	mov dl,28 ;column
-  	mov bl,14
-  	int 10h
- 	mov si,  score_azar
-  	call printf 
-  	
-  	call pontuacao_zerada
-	call delay1s
-	call delay1s
-	call delay1s
-	jmp jogo_t_sports
-	
-ret 
-text_azar_tech: 
-	call clear
-	
-	mov ah,02h
-	mov dh,8 ;row
-	mov dl,9 ;column
-	mov bl,10
-	int 10h
-	call coloured_letter
-	
-	mov ah,02h
-	mov dh,15 ;row
-	mov dl,7 ;column
-	mov bl,12
-	int 10h
-	mov si,hazard
-	call printf
-	
-	mov ah,02h
-  	mov dh,4 ;row
-  	mov dl,28 ;column
-  	mov bl,14
-  	int 10h
- 	mov si,  score_azar
-  	call printf 
-  	
-  	call pontuacao_zerada 
-  	
-	call delay1s
-	call delay1s
-	call delay1s
-	jmp jogo_t_tech
-	
-ret 
-text_azar_count: 
-	call clear
-	
-	mov ah,02h
-	mov dh,8 ;row
-	mov dl,9 ;column
-	mov bl,10
-	int 10h
-	call coloured_letter
-	
-	mov ah,02h
-	mov dh,15 ;row
-	mov dl,7 ;column
-	mov bl,12
-	int 10h
-	mov si,hazard
-	call printf
-	
-	mov ah,02h
-  	mov dh,4 ;row
-  	mov dl,28 ;column
-  	mov bl,14
-  	int 10h
- 	mov si,  score_azar
-  	call printf 
-  	
-  	call pontuacao_zerada
-  
-	call delay1s
-	call delay1s
-	call delay1s
-	jmp jogo_t_count
-ret 
-
-
- 	
+   	
 delay1s:                 ; 1 SEC DELAY
   mov cx, 0fh
   mov dx, 4240h
   mov ah, 86h
   int 15h
   ret
-
 
   ;zera tudo caso o jogador perca
   zerar_tudo:
@@ -399,9 +254,6 @@ delay1s:                 ; 1 SEC DELAY
     jmp start
   ret
  
-  
- 
-  
   ;....................
 prossegue_jogo:
   call terminou_jogo
@@ -418,6 +270,7 @@ prossegue_jogo:
   cmp al,51
   je jogo_t_count
 
+  ;Verifica se o jogador já acertou todas as palavras de todos os temas
   terminou_jogo:
   mov si, count1
   mov di, w_count1
@@ -506,7 +359,7 @@ prossegue_jogo:
   je start
   ret
   
-               ;funcao que printa as coisas gradualmente
+  ;funcao que printa as coisas gradualmente
   print_string:
 	mov bl,02h
 	loop_print_string:
@@ -1139,14 +992,14 @@ jogo_t_body: ;
 
     call passou_de_fase_body
 
-        mov ah, 0 ;escolhe modo videos
-  	mov al, 13h ;modo VGA
-  	int 10h
+  mov ah, 0 ;escolhe modo videos
+  mov al, 13h ;modo VGA
+  int 10h
   
-  	mov ah, 0xb ;escolhe cor da tela
-  	mov bh, 0
-  	mov bl, 1;cor da tela
-  	int 10h
+  mov ah, 0xb ;escolhe cor da tela
+  mov bh, 0
+  mov bl, 1;cor da tela
+  int 10h
 	mov ah,02h
 	mov dh,1 ;row
 	mov dl,6 ;column
@@ -1155,7 +1008,7 @@ jogo_t_body: ;
 	mov si, dica_b
 	call printf
 	
-  	mov ah,02h
+  mov ah,02h
 	mov dh,7 ;row
 	mov dl,11 ;column
 	mov bl,15
@@ -1196,7 +1049,7 @@ jogo_t_body: ;
   mov bl,11
   int 10h
   
-  mov si,  guess
+  mov si, guess
   call printf
   
   mov ah,02h
@@ -1214,7 +1067,7 @@ jogo_t_body: ;
   mov bl,14
   int 10h
   
- mov si,  score_board
+ mov si, score_board
  call printf 
   
   mov ah,02h
@@ -1223,11 +1076,10 @@ jogo_t_body: ;
   mov bl,14
   int 10h
   
-  mov si,  show_score
+  mov si, show_score
   call printf
 
-      call limite_de_letras_body
-  
+  call limite_de_letras_body
   
   mov ah,02h
   mov dh,20 ;row
@@ -1240,14 +1092,10 @@ jogo_t_body: ;
   
     cmp al, 27
     je zerar_tudo
-    ;cmp al,49
-    ;jump to spinning roulette screen
     cmp al,'1'
     je decisao_de_giro1 
-    ;start guessing the three words
     cmp al, '2'
     je guessing_word_body
-   ;jmp jogo_t_body
    
        
   jmp jogo_t_body
@@ -1403,6 +1251,42 @@ comparar_word3_body:
   
   .done:
   ret
+
+text_azar_body: 
+	call clear
+  
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	mov bl,10
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,7 ;column
+	mov bl,12
+	int 10h
+	mov si,hazard
+	call printf
+	
+	mov ah,02h
+  	mov dh,4 ;row
+  	mov dl,28 ;column
+  	mov bl,14
+  	int 10h
+ 	mov si,  score_azar
+  	call printf 
+  	
+  	call pontuacao_zerada
+  	
+	call delay1s
+	call delay1s
+	call delay1s
+	
+	jmp jogo_t_body
+	
+ret 
 
 guessing_word_body:
   mov di, guessWord
@@ -1859,6 +1743,40 @@ comparar_word3_sports:
   .done:
   ret
 
+text_azar_sports: 
+	call clear
+	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	mov bl,10
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,7 ;column
+	mov bl,12
+	int 10h
+	mov si,hazard
+	call printf
+	
+	mov ah,02h
+  	mov dh,4 ;row
+  	mov dl,28 ;column
+  	mov bl,14
+  	int 10h
+ 	mov si,  score_azar
+  	call printf 
+  	
+  call pontuacao_zerada
+	call delay1s
+	call delay1s
+	call delay1s
+	jmp jogo_t_sports
+	
+ret 
+
 guessing_word_sport:
   mov di, guessWord
   call gets
@@ -2314,6 +2232,41 @@ comparar_word3_tech:
   jmp .done
   .done:
   ret
+
+text_azar_tech: 
+	call clear
+	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	mov bl,10
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,7 ;column
+	mov bl,12
+	int 10h
+	mov si,hazard
+	call printf
+	
+	mov ah,02h
+  	mov dh,4 ;row
+  	mov dl,28 ;column
+  	mov bl,14
+  	int 10h
+ 	mov si,  score_azar
+  	call printf 
+  	
+  	call pontuacao_zerada 
+  	
+	call delay1s
+	call delay1s
+	call delay1s
+	jmp jogo_t_tech
+	
+ret 
 
 guessing_word_tech:
   mov di, guessWord
@@ -2773,6 +2726,40 @@ comparar_word3_count:
   jmp .done
   .done:
   ret
+
+text_azar_count: 
+	call clear
+	
+	mov ah,02h
+	mov dh,8 ;row
+	mov dl,9 ;column
+	mov bl,10
+	int 10h
+	call coloured_letter
+	
+	mov ah,02h
+	mov dh,15 ;row
+	mov dl,7 ;column
+	mov bl,12
+	int 10h
+	mov si,hazard
+	call printf
+	
+	mov ah,02h
+  	mov dh,4 ;row
+  	mov dl,28 ;column
+  	mov bl,14
+  	int 10h
+ 	mov si,  score_azar
+  	call printf 
+  	
+  	call pontuacao_zerada
+  
+	call delay1s
+	call delay1s
+	call delay1s
+	jmp jogo_t_count
+ret 
  
 guessing_word_count:
   mov di, guessWord
