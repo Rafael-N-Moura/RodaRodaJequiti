@@ -234,11 +234,7 @@ mov ah, 0 ;escolhe modo videos
 	int 10h
 	mov si,show_score
 	call printf
-	
-	
-	
-	
-	
+		
 	call delay1s
 	call delay1s
 	call delay1s
@@ -408,6 +404,7 @@ delay1s:                 ; 1 SEC DELAY
   
   ;....................
 prossegue_jogo:
+  call terminou_jogo
   call random_number_tema
   
   mov al,dl
@@ -420,6 +417,94 @@ prossegue_jogo:
   je jogo_t_tech
   cmp al,51
   je jogo_t_count
+
+  terminou_jogo:
+  mov si, count1
+  mov di, w_count1
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch20
+  ret
+  branch20:
+  mov si,count2
+  mov di, w_count2
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch21
+  ret
+  branch21:
+  mov si,count3
+  mov di, w_count3
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch22
+  ret
+
+  branch22:
+  mov si, tech1
+  mov di, w_tech1
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch23
+  ret
+  branch23:
+  mov si,tech2
+  mov di, w_tech2
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch24
+  ret
+  branch24:
+  mov si,tech3
+  mov di, w_tech3
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch25
+  ret
+
+  branch25:
+  mov si, sport1
+  mov di, w_sport1
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch26
+  ret
+  branch26:
+  mov si,sport2
+  mov di, w_sport2
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch27
+  ret
+  branch27:
+  mov si,sport3
+  mov di, w_sport3
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch28
+  ret
+
+  branch28:
+  mov si, body1
+  mov di, w_body1
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch29
+  ret
+  branch29:
+  mov si,body2
+  mov di, w_body2
+  call strcmp_adaptada
+  cmp cl, 1
+  je branch30
+  ret
+  branch30:
+  mov si,body3
+  mov di, w_body3
+  call strcmp_adaptada
+  cmp cl, 1
+  je start
+  ret
   
                ;funcao que printa as coisas gradualmente
   print_string:
