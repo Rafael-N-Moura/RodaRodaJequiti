@@ -14,7 +14,8 @@ w4 db '> Gire a roda e digite uma letra',0
 w5 db '> A cada letra acertada ha um acrescimo de pontos de acordo com o que voce tirou na roleta',0
 w6 db '> O objetivo consiste em acertar todas as palavras',0
 w7 db '> Voce pode advinhar a palavra toda se preferir,mas o risco e por sua conta',0 
-w8 db 'INSTRUCOES',0
+w8 db 'INSTRUCOES [2]',0
+w82 db 'INSTRUCOES',0
 w9 db 'Paulo Sergio <PSGS>',0
 w10 db 'Rafael Moura<RNM4>',0
 w11 db 'Obrigado por jogar! <3',0
@@ -28,11 +29,15 @@ get_back db '*Pressione a tecla ESC se quiser voltar',0
 guessWord times 20 db 0
 
 ;textoMenu
-  tittle db 'Roda-Roda Jequiti',0
-  play db 'JOGAR',0
+  tittle db 'RODA-RODA JEQUITI',0
+  play db 'JOGAR [1]',0
   instruct db'Escolher tema',0
-  credits db 'CREDITOS',0
-
+  credits db 'CREDITOS [3]',0
+  credits2 db 'CREDITOS',0
+  d_horiz_up db '# # # # # # # # # # # # # # # # # # # #',0
+  d_horiz_down db'# # # # # # # # # # # # # # # # # # # #',0
+  d_vert db '#',0 
+  course db 'IF677 - 21.1',0
 ;t_body
   w_body1 db 'abdomen',0 
   w_body2 db 'lingua',0
@@ -90,6 +95,16 @@ msg_fase db 'Voce passou de fase!',0
 current_score db 'Score atual R$: ',0
 next_stage db '........Carregando fase........',0
 
+;tela final
+endg db 'END GAME',0
+get_back2 db 'Pressione ESC para ir ao menu',0
+final_score db 'Score final R$: ',0
+cor_temp dw 0
+;w11
+;show_score
+var dw 0
+contador dw 0
+
 ;variaveis auxiliares de pontuacao
 show_score times 10 db 0
 soma_total dw 0
@@ -103,15 +118,28 @@ start:
   xor ax, ax
   mov cx, ax
   mov ds, ax
-  mov es, ax
+  mov es, ax 
+  
+  call pontuacao_zerada ;seta a pontuacao inicial (0)
+  call modo_video2
 
-  call modo_video
-
+  
   call printa_tittle
   call printa_play
   call printa_w8
   call printa_credits
-  call tela_up
+  call printa_course
+  call getchar
+  cmp al,'1'
+  je prossegue_jogo
+  cmp al,'2'
+  je tela_w8
+  cmp al,'3'
+  je tela_credits
+
+  jmp start
+   
+   
 
 
 ;gerador de randomicos tema
@@ -139,7 +167,7 @@ random_number_0to9:
   		
 ;gerar letras coloridas
 coloured_letter:
- mov si,str1
+ 
 	mov bl,02h
 	loop_print_string1:
 		mov cx,1
@@ -356,12 +384,12 @@ prossegue_jogo:
   mov di, w_body3
   call strcmp_adaptada
   cmp cl, 1
-  je start
+  je tela_final
   ret
   
   ;funcao que printa as coisas gradualmente
   print_string:
-	mov bl,02h
+	;mov bl,02h
 	loop_print_string:
 		mov cx,1
 		call delay
@@ -375,18 +403,7 @@ prossegue_jogo:
 		ret
 
   
-tela_up:
-  call highlight_D_off
-  call highlight_M_off
-  call highlight_U_on
-  call getchar
-  cmp al, 13
-  je prossegue_jogo
-  cmp al, 's'
-  je tela_middle
-  jmp tela_up
-  ret
-  
+
 printa_num:
   mov ah,02h
   mov dh,4    ;row
@@ -582,49 +599,23 @@ delchar:
     mov al, 0x08                   
     call putchar
 ret
-  
-
-tela_down:
-  call highlight_U_off
-  call highlight_M_off
-  call highlight_D_on
-  call getchar
-  cmp al, 13
-  je tela_credits
-  cmp al, 'w'
-  je tela_middle
-  jmp tela_down
-  ret
-
-tela_middle:
-  call highlight_U_off
-  call highlight_D_off
-  call highlight_M_on
-  call getchar
-  cmp al, 13
-  je tela_w8
-  cmp al, 'w'
-  je tela_up
-  cmp al, 's'
-  je tela_down
-  jmp tela_middle
-  ret
 
 printa_tittle:
   mov ah,02h
   mov dh,3    ;row
-  mov dl,9     ;column
+  mov dl,11
+  mov bl,9    ;column
   int 10h
 
   mov si, tittle
-  call printf
+  call coloured_letter
   ret
 
 printa_play:
   mov ah,02h
-  mov dh,10    ;row
-  mov dl,15     ;column
-  mov bl, 5
+  mov dh,12   ;row
+  mov dl,2     ;column
+  mov bl, 10
   int 10h
 
   mov si, play
@@ -634,8 +625,8 @@ printa_play:
 printa_w8:
   mov ah,02h
   mov dh,12    ;row
-  mov dl,15     ;column
-  mov bl, 2
+  mov dl,12   ;column
+  mov bl, 0xe
   int 10h
 
   mov si, w8
@@ -644,47 +635,105 @@ printa_w8:
 
 printa_credits:
   mov ah,02h
-  mov dh,14    ;row
-  mov dl,15     ;column
-  mov bl, 0xf
+  mov dh,12    ;row
+  mov dl,27    ;column
+  mov bl, 9
   int 10h
 
   mov si, credits
   call printf
   ret
-
-highlight_U_on:
+  
+  printa_course:
   mov ah,02h
-  mov dh,10    ;row
-  mov dl,15     ;column
-  mov bl, 0xe
+  mov dh,22  ;row
+  mov dl,14    ;column
+  mov bl,5
   int 10h
 
-  mov si, play
+  mov si, course
   call printf
   ret
+;-----------------------
+mudacor:
+	loop_print_string6:
+		add byte[var],1
+		cmp byte[var],4
+		je end_print_string6
+	      call random_number_0to9
+	      mov byte[var],dl
+	      mov ah,02h
+              mov dh,10 ;row
+              mov dl,16 ;column
+	      add byte[var],1
+	      mov bl,byte[var]
+              int 10h
+               mov si, endg
+               call printf
+               call delay
+		jmp loop_print_string6
+	end_print_string6:
+		ret
+;-------------------
 
-  highlight_M_on:
-    mov ah,02h
-    mov dh,12    ;row
-    mov dl,15     ;column
-    mov bl, 0xe
-    int 10h
+tela_final:
 
-    mov si, w8
-    call printf
-    ret
+  call modo_video
 
-highlight_D_on:
+  ;mov ah,02h
+  ;mov dh,10 ;row
+  ;mov dl,16 ;column
+  ;mov bl,11
+  ;int 10h
+  mov byte[contador],0
+  call mudacor
+
+
   mov ah,02h
-  mov dh,14    ;row
-  mov dl,15     ;column
-  mov bl, 0xe
+  mov dh,2 ;row
+  mov dl,9 ;column
+  mov bl,3
   int 10h
 
-  mov si, credits
+  mov si, w11
+  call print_string
+
+  mov ah,02h
+  mov dh,17 ;row
+  mov dl,10 ;column
+  mov bl,0xe
+  int 10h
+
+  mov si, final_score
+  call print_string
+
+  mov ah,02h
+  mov dh,17 ;row
+  mov dl,26 ;column
+  mov bl,0xe
+  int 10h
+
+  mov si, show_score
   call printf
-  ret
+  ;;;
+  mov ah,02h
+  mov dh,23 ;row
+  mov dl,5 ;column
+  mov bl,0xc
+  int 10h
+
+  mov si, get_back2
+  call printf
+
+  call getchar
+    cmp al, 27
+    je start
+  jmp tela_final
+  
+ret
+
+
+
 
 tela_w8:
 
@@ -703,7 +752,7 @@ tela_w8:
   mov bl,10
   int 10h
 
-  mov si, w8
+  mov si, w82
   call printf
 
   mov ah,02h
@@ -764,7 +813,7 @@ tela_credits:
   mov bl,1
   int 10h
 
-  mov si, credits
+  mov si, credits2
   call printf
 
   mov ah,02h
@@ -807,39 +856,9 @@ tela_credits:
     cmp al, 27
     je start
   jmp tela_credits
-
-highlight_D_off:
-  mov ah,02h
-  mov dh,14    ;row
-  mov dl,15     ;column
-  mov bl, 8
-  int 10h
-
-  mov si, credits
-  call printf
   ret
 
-highlight_M_off:
-  mov ah,02h
-  mov dh,12    ;row
-  mov dl,15     ;column
-  mov bl,2
-  int 10h
 
-  mov si, w8
-  call printf
-  ret
-
-highlight_U_off:
-  mov ah,02h
-  mov dh,10    ;row
-  mov dl,15     ;column
-  mov bl, 4
-  int 10h
-
-  mov si, play
-  call printf
-  ret
 
 printf:
   lodsb
@@ -860,6 +879,24 @@ putchar:
   int 10h ;imprime o que tá em al
   ret
   
+  
+ 
+ modo_video2:
+  mov ah, 0 ;escolhe modo videos
+  mov al,12h ;modo VGA
+  int 10h
+  
+  mov ah, 0xb ;escolhe cor da tela
+  mov bh, 0
+  mov bl, 0;cor da tela
+  int 10h
+
+  mov ah, 0xe ;escolhe cor da letra
+  mov bh, 0   ;numero da pagina
+  mov bl, 0xf ;cor branca da letra
+ 
+ 
+ 
 modo_video:
   mov ah, 0 ;escolhe modo videos
   mov al, 13h ;modo VGA
@@ -1125,6 +1162,7 @@ mov ah, 0 ;escolhe modo videos
 	mov dl,9 ;column
 	mov bl,10
 	int 10h
+	mov si,str1
 	call coloured_letter
 	
 	mov ah,02h
@@ -1260,6 +1298,7 @@ text_azar_body:
 	mov dl,9 ;column
 	mov bl,10
 	int 10h
+	mov si, str1
 	call coloured_letter
 	
 	mov ah,02h
@@ -1506,7 +1545,7 @@ mov ah, 0 ;escolhe modo videos
 
   mov ah,02h
   mov dh,10 ;row
-  mov dl,10 ;column
+  mov dl,12 ;column
   mov bl,15
   int 10h
 
@@ -1619,6 +1658,7 @@ mov ah, 0 ;escolhe modo videos
 	mov dh,8 ;row
 	mov dl,9 ;column
 	int 10h
+	mov si, str1
 	call coloured_letter
 	
 	mov ah,02h
@@ -1751,6 +1791,7 @@ text_azar_sports:
 	mov dl,9 ;column
 	mov bl,10
 	int 10h
+	mov si, str1
 	call coloured_letter
 	
 	mov ah,02h
@@ -1988,7 +2029,7 @@ mov ah, 0 ;escolhe modo videos
 
   mov ah,02h
   mov dh,10 ;row
-  mov dl,11 ;column
+  mov dl,12 ;column
   mov bl,15
   int 10h
 
@@ -2103,6 +2144,7 @@ mov ah, 0 ;escolhe modo videos
 	mov dh,8 ;row
 	mov dl,9 ;column
 	int 10h
+	mov si,str1
 	call coloured_letter
 	
 	mov ah,02h
@@ -2241,6 +2283,7 @@ text_azar_tech:
 	mov dl,9 ;column
 	mov bl,10
 	int 10h
+	mov si, str1
 	call coloured_letter
 	
 	mov ah,02h
@@ -2480,7 +2523,7 @@ mov ah, 0 ;escolhe modo videos
 
   mov ah,02h
   mov dh,10 ;row
-  mov dl,9 ;column
+  mov dl,13 ;column
   mov bl,15
   int 10h
 
@@ -2594,6 +2637,7 @@ mov ah, 0 ;escolhe modo videos
 	mov dh,8 ;row
 	mov dl,9 ;column
 	int 10h
+	mov si,str1
 	call coloured_letter
 	
 	mov ah,02h
@@ -2735,6 +2779,7 @@ text_azar_count:
 	mov dl,9 ;column
 	mov bl,10
 	int 10h
+	mov si,str1
 	call coloured_letter
 	
 	mov ah,02h
