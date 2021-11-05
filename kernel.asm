@@ -120,6 +120,7 @@ start:
   mov ds, ax
   mov es, ax 
   
+  
   call pontuacao_zerada ;seta a pontuacao inicial (0)
   call modo_video2
 
@@ -242,7 +243,7 @@ mov ah, 0 ;escolhe modo videos
 	
 	mov ah,02h
 	mov dh,15 ;row
-	mov dl,12 ;column
+	mov dl,10 ;column
 	mov bl,14
 	int 10h
 	mov si,current_score
@@ -252,7 +253,7 @@ mov ah, 0 ;escolhe modo videos
 	;mostrar score atual
 	mov ah,02h
 	mov dh,15 ;row
-	mov dl,28 ;column
+	mov dl,26 ;column
 	mov bl,15
 	int 10h
 	mov si,show_score
@@ -677,7 +678,6 @@ mudacor:
 ;-------------------
 
 tela_final:
-
   call modo_video
 
   ;mov ah,02h
@@ -727,7 +727,7 @@ tela_final:
 
   call getchar
     cmp al, 27
-    je start
+    je zerar_tudo
   jmp tela_final
   
 ret
@@ -1188,7 +1188,12 @@ mov ah, 0 ;escolhe modo videos
 
   call getchar
   mov cx, ax
-call putchar
+  mov ah,02h
+  mov dh,17 ;row
+  mov dl,20 ;column
+  mov bl,14
+  int 10h
+  call putchar
   call getchar
    cmp al, 0x0d
     je comparar_body
@@ -1621,17 +1626,12 @@ mov ah, 0 ;escolhe modo videos
   
     cmp al, 27
     je zerar_tudo
-    ;cmp al,49
-    ;jump to spinning roulette screen
+
     cmp al,'1'
     je decisao_de_giro2 
-    ;start guessing the three words
-    cmp al,'2' ;start guessing the three words
+    cmp al,'2'
     je guessing_word_sport
-   ;jmp jogo_t_body
-   
- 
-
+    
 
   jmp jogo_t_sports
 	
@@ -1686,6 +1686,11 @@ mov ah, 0 ;escolhe modo videos
 	; call delay1s
   call getchar
   mov cx, ax
+  mov ah,02h
+  mov dh,17 ;row
+  mov dl,20 ;column
+  mov bl,14
+  int 10h
 call putchar
   call getchar
    cmp al, 0x0d
@@ -2177,6 +2182,11 @@ mov ah, 0 ;escolhe modo videos
 	
   call getchar
   mov cx, ax
+  mov ah,02h
+  mov dh,17 ;row
+  mov dl,20 ;column
+  mov bl,14
+  int 10h
 call putchar
   call getchar
    cmp al, 0x0d
