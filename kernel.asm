@@ -122,7 +122,7 @@ start:
   
   
   call pontuacao_zerada ;seta a pontuacao inicial (0)
-  call modo_video2
+  call modo_video
 
   
   call printa_tittle
@@ -168,7 +168,6 @@ random_number_0to9:
   		
 ;gerar letras coloridas
 coloured_letter:
- 
 	mov bl,02h
 	loop_print_string1:
 		mov cx,1
@@ -286,8 +285,8 @@ delay1s:                 ; 1 SEC DELAY
   ;....................
 prossegue_jogo:
   call terminou_jogo
+
   call random_number_tema
-  
   mov al,dl
   add al,48
   cmp al,48
@@ -404,89 +403,6 @@ prossegue_jogo:
 		ret
 
   
-
-printa_num:
-  mov ah,02h
-  mov dh,4    ;row
-  mov dl,8     ;column
-  int 10h
-  mov al,'0'
-  call putchar
-  
-
-  mov ah,02h
-  mov dh,4    ;row
-  mov dl,14     ;column
-  int 10h
-  mov al,'1'
-  call putchar
-  
-
-  mov ah,02h
-  mov dh,4    ;row
-  mov dl,20    ;column
-  int 10h
-  mov al,'2'
-  call putchar
-  
-
-  mov ah,02h
-  mov dh,4    ;row
-  mov dl,27     ;column
-  int 10h
-  mov al,'3'
-  call putchar
-  
-
-  mov ah,02h
-  mov dh,4    ;row
-  mov dl,33  ;column
-  int 10h
-  mov al,'4'
-  call putchar
-  
-  
-  mov ah,02h
-  mov dh,18    ;row
-  mov dl,8     ;column
-  int 10h
-  mov al,'5'
-  call putchar
-  
-
-  mov ah,02h
-  mov dh,18    ;row
-  mov dl,14     ;column
-  int 10h
-  mov al,'6'
-  call putchar
-  
-
-  mov ah,02h
-  mov dh,18    ;row
-  mov dl,20    ;column
-  int 10h
-  mov al,'7'
-  call putchar
-  
-
-  mov ah,02h
-  mov dh,18    ;row
-  mov dl,27     ;column
-  int 10h
-  mov al,'8'
-  call putchar
-  
-
-  mov ah,02h
-  mov dh,18    ;row
-  mov dl,33  ;column
-  int 10h
-  mov al,'9'
-  call putchar
-
-  ret
-
 strcmp:              ; mov si, string1, mov di, string2
   .loop1:
     lodsb
@@ -661,17 +577,16 @@ mudacor:
 		add byte[var],1
 		cmp byte[var],4
 		je end_print_string6
-	      call random_number_0to9
-	      mov byte[var],dl
-	      mov ah,02h
-              mov dh,10 ;row
-              mov dl,16 ;column
-	      add byte[var],1
-	      mov bl,byte[var]
-              int 10h
-               mov si, endg
-               call printf
-               call delay
+	  call random_number_0to9
+	  mov byte[var],dl
+	  mov ah,02h
+    mov dh,10 ;row
+    mov dl,16 ;column
+	  mov bl,byte[var]
+    int 10h
+    mov si, endg
+    call printf
+    call delay
 		jmp loop_print_string6
 	end_print_string6:
 		ret
@@ -880,23 +795,6 @@ putchar:
   ret
   
   
- 
- modo_video2:
-  mov ah, 0 ;escolhe modo videos
-  mov al,12h ;modo VGA
-  int 10h
-  
-  mov ah, 0xb ;escolhe cor da tela
-  mov bh, 0
-  mov bl, 0;cor da tela
-  int 10h
-
-  mov ah, 0xe ;escolhe cor da letra
-  mov bh, 0   ;numero da pagina
-  mov bl, 0xf ;cor branca da letra
- 
- 
- 
 modo_video:
   mov ah, 0 ;escolhe modo videos
   mov al, 13h ;modo VGA
@@ -1027,7 +925,7 @@ acumula_valor_guess_words: ;inserir o valor da palavra antes de chamar a funcao
 ;------------------------TUDO DA TELA BODY------------------------------------------
 jogo_t_body: ;
 
-    call passou_de_fase_body
+  call passou_de_fase_body
 
   mov ah, 0 ;escolhe modo videos
   mov al, 13h ;modo VGA
