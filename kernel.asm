@@ -1403,7 +1403,7 @@ limite_de_letras_body:
   mov si,body3
   mov di, w_body3
   call strcmp_adaptada2
-  cmp dl, 10
+  cmp dl, 11
   jnl obrigar_guess_body
   ret
 
@@ -2389,7 +2389,7 @@ limite_de_letras_tech:
   mov si,tech3
   mov di, w_tech3
   call strcmp_adaptada2
-   cmp dl, 12
+   cmp dl, 13
    jnl obrigar_guess_tech
   ret
  
@@ -2883,7 +2883,7 @@ limite_de_letras_count:
   mov si,count3
   mov di, w_count3
   call strcmp_adaptada2
-  cmp dl, 10
+  cmp dl, 11
   jnl obrigar_guess_count
   ret
 
